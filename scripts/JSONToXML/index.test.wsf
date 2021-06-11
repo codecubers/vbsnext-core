@@ -1,0 +1,12 @@
+<package>
+    <job id="Test1">
+        <script language="VBScript" src="index.vbs" />
+        <script language="VBScript">
+        Dim s
+        s = "{""key"": ""value""}"
+        set oJsonToXml = new JSONToXML
+        set oXml = oJsonToXml.toXml(s)
+        WScript.Echo oXml.xml
+        </script>
+    </job>
+</package>

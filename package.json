@@ -1,0 +1,23 @@
+{
+  "name": "vbspm",
+  "version": "1.0.3git ",
+  "description": "Vbs Package Manager",
+  "main": "index.vbs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node vbspm.js"
+  },
+  "keywords": [
+    "vbs package manager",
+    "vbs on npm",
+    "visual basic script",
+    "wsf"
+  ],
+  "author": "Pravee Kumar Nandagiri (@pravynandas) <pravynandas@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "async-waterfall": "^0.1.5",
+    "wsf2json": "^1.0.3",
+    "xml2js": "^0.4.23"
+  }
+}

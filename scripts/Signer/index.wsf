@@ -1,0 +1,49 @@
+' Signing a Script
+' The following scripts demonstrate the creation of a signature, which is used in a verification process. 
+' The script uses the Signer Object and the SignFile method to create a digital signature.
+' Author: VSEDIT.COM
+' Reference: https://www.vbsedit.com/html/b21e5abe-198f-4c3a-b1c6-39fdc3da6f11.asp
+<package id="Signer">
+   ' JScript version
+   <job id="JS">
+      <runtime>
+         <named name="file" helpstring="the file to sign" required="true" type="string"/>
+         <named name="cert" helpstring="the name of the signing certificate" required="true" type="string"/>
+         <named name="store" helpstring="the name of the certificate store" required="false" type="string"/>
+      </runtime>
+      <script language="JScript">
+         var Signer, File, Cert, Store;
+         if (!(WScript.Arguments.Named.Exists("cert") && WScript.Arguments.Named.Exists("file"))) 
+         {
+            WScript.Arguments.ShowUsage();
+            WScript.Quit();
+         }
+         Signer = new ActiveXObject("Scripting.Signer");
+         File  = WScript.Arguments.Named("file");
+         Cert  = WScript.Arguments.Named("cert");
+         Store = WScript.Arguments.Named("store");
+         Signer.SignFile(File, Cert, Store);
+      </script>
+   </job>
+
+   ' VBScript version
+   <job id="VB" >
+      <runtime>
+         <named name="file" helpstring="the file to sign" required="true" type="string"/>
+         <named name="cert" helpstring="the name of the signing certificate" required="true" type="string"/>
+         <named name="store" helpstring="the name of the certificate store" required="false" type="string"/>
+      </runtime>
+      <script language="VBScript">
+         Dim Signer, File, Cert, Store
+         If Not (WScript.Arguments.Named.Exists("cert") And WScript.Arguments.Named.Exists("file")) Then
+            WScript.Arguments.ShowUsage
+            WScript.Quit
+         End If
+         Set Signer = CreateObject("Scripting.Signer")
+         File  = WScript.Arguments.Named("file")
+         Cert  = WScript.Arguments.Named("cert")
+         Store = WScript.Arguments.Named("store")  
+         Signer.SignFile File, Cert, Store
+      </script>
+   </job>
+</package>
