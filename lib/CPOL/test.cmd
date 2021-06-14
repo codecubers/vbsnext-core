@@ -1,0 +1,1 @@
+cscript //nologo vb_format_function.test.wsf //job:Test0

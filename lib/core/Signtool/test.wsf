@@ -1,0 +1,9 @@
+<package>
+    <job id="Test0">
+        <script language="VBScript" src="Signtool.vbs" />
+        <script language="VBScript">
+            set oSigntool = new Signtool
+            oSigntool.Sign Wscript.ScriptFullName, "pwd"
+        </script>
+    </job>
+</package>

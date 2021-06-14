@@ -1,11 +1,11 @@
 {
   "name": "vbspm",
-  "version": "1.0.3git ",
+  "version": "1.0.4",
   "description": "Vbs Package Manager",
   "main": "index.vbs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node vbspm.js"
+    "build": "node bin\\vbspm.js && cscript //nologo bin\\build.out.vbs /file:\"bin\\test.vbs\""
   },
   "keywords": [
     "vbs package manager",

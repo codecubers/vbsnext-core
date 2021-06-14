@@ -1,0 +1,4 @@
+<job id="server">
+    <script language="VBScript" src="..\lib\build.out.vbs" />
+    <script language="VBScript" src="server.vbs" />
+</job>

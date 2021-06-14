@@ -1,4 +1,0 @@
-<job id="vbspm-build">
-    <script language="VBScript" src="utilities.vbs" />
-    <script language="VBScript" src="build.vbs" />
-</job>

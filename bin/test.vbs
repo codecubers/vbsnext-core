@@ -1,0 +1,1 @@
+Wscript.Echo "Build completed Successfully."

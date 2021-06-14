@@ -1,0 +1,10 @@
+<package>
+    <job id="Test0">
+        <script language="VBScript" src="FSO.vbs" />
+        <script language="VBScript">
+            Dim cFSO
+            set cFSO = new FSO
+            WScript.Echo cFSO.ReadFile("test.cmd")
+        </script>
+    </job>
+</package>

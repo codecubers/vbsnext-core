@@ -1,0 +1,11 @@
+<package>
+    <job id="Test0">
+        <script language="VBScript" src="WShell.vbs" />
+        <script language="VBScript">
+            set runner = new WShell
+            ' runner.OpenTextFile ".\build.log"
+            runner.PingMe
+            runner.Ping "192.168.0.1"
+        </script>
+    </job>
+</package>

@@ -1,0 +1,1 @@
+cscript //nologo .\test.wsf //job:Test0
