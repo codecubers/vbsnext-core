@@ -1,8 +1,20 @@
+' ==============================================================================================
+' Implementation of several use cases of FileSystemObject into this class
+' Author: Praveen Nandagiri (pravynandas@gmail.com)
+' ==============================================================================================
+
 Class FSO
+	Private dir
 	Private objFSO
 	
 	Private Sub Class_Initialize
 		Set objFSO = CreateObject("Scripting.FileSystemObject")
+		dir = Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,"\"))
+	End Sub
+
+	' Update the current directory of the instance if needed
+	public Sub setDir(s)
+		dir = s
 	End Sub
 	
 	Public Function GetFSO

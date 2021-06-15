@@ -2,10 +2,11 @@
   "name": "vbspm",
   "version": "1.0.4",
   "description": "Vbs Package Manager",
-  "main": "index.vbs",
+  "main": "vbspm.vbs",
+  "bin": "vbspm.vbs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node bin\\vbspm.js && cscript //nologo bin\\build.out.vbs /file:\"bin\\test.vbs\""
+    "build": "node bin\\wsfParser.js && cscript //nologo vbspm.vbs /file:\"bin\\test.vbs\""
   },
   "keywords": [
     "vbs package manager",

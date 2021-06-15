@@ -52,3 +52,9 @@ Wscript.Echo "Build number: " & _
 	Wscript.Echo "Script name: " & Wscript.ScriptName
 
 Wscript.Echo "Script path: " & Wscript.ScriptFullName
+
+
+Set objShell = CreateObject( "WScript.Shell" )
+resourceLocation=objShell.ExpandEnvironmentStrings("%LOCALAPPDATA%")
+
+currentdir=Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,"\"))

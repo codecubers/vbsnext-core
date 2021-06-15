@@ -62,19 +62,19 @@ Class WShell
     End Property
      
 
+    Private dir
     Private oThis
-    Private oFS
     
     Private Sub Class_Initialize
         Set oThis = WScript.CreateObject("WScript.Shell")
         
         ' Set execution directory
-        set oFS = CreateObject("Scripting.FileSystemObject")
-        if Not oFS Is Nothing Then
-            oThis.CurrentDirectory = oFS.GetParentFolderName(oFS.GetFile(Wscript.ScriptFullName)) 
-        else
-            Wscript.Echo "WShell class: Unable to instance FS Class"
-        end if
+        dir = Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,"\"))
+    End Sub
+    
+    ' Update the current directory of the instance if needed
+    public Sub setDir(s)
+        dir = s
     End Sub
 
     Public property get GetObj

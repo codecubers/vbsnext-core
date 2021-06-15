@@ -48,7 +48,7 @@ parseWSF('bin\\build.wsf').then((jobs)=>{
     vbsCombined = vbsCombined.htmlEscape();
     // console.log('vbs combined:')
     // console.log(vbsCombined);
-    fs.writeFileSync('bin\\build.out.vbs', vbsCombined);
+    fs.writeFileSync('vbspm.vbs', vbsCombined);
 }).catch((error)=>{
     console.error(error)
 })

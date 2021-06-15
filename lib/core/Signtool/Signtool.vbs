@@ -17,6 +17,12 @@ Class Signtool
             Wscript.Echo "Signer Class: Unable to initialize WShell class."
             Wscript.Quit
         end if
+        dir = Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,"\"))
+    End Sub
+    
+    ' Update the current directory of the instance if needed
+    public Sub setDir(s)
+        dir = s
     End Sub
 
     public Function Sign(file, pwd)
