@@ -4,19 +4,19 @@
             <named name="file" helpstring="the file to sign" required="true" type="string"/>
         </runtime>
 
+        <script language="VBScript" src="lib/core/globals.vbs" />
         <script language="VBScript" src="lib/core/FSO/FSO.vbs" />
         <script language="VBScript" >
         <![CDATA[
             Dim cFS
             set cFS = new FSO
             Function log(msg)
-                cFS.WriteLog "bin\\build.log", msg, false 
+                cFS.WriteLog currentPath & "\build.log", msg, false 
             End Function
             log "Execution Started for file"
         ]]>
         </script>
         
-        <script language="VBScript" src="lib/core/globals.vbs" />
         <script language="VBScript" src="lib/core/Wshell.vbs" />
         <script language="VBScript" src="lib/core/VbsJson/VbsJson.vbs" />    
         <script language="VBScript" src="lib/core/JSONToXML/JSONToXML.vbs" />    

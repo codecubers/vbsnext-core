@@ -1,7 +1,12 @@
+With CreateObject("WScript.Shell")
+  CurrentPath=.CurrentDirectory
+  Wscript.Echo  "Base path: " & CurrentPath
+End With
+
 Sub Include(file)
   Wscript.Echo "Include(" + file + ")"
   
-  Dim cFS: cFS = new FS
+  ' Dim cFS: cFS = new FS
   Dim content: content = cFS.ReadFile(file)
   if content <> "" Then ExecuteGlobal content
 End Sub
@@ -9,7 +14,7 @@ End Sub
 
 Public Sub Import(pkg)
   Wscript.Echo "Import(" + Pkg + ")"
-  Include "./node_modules/" + pkg + "/index.vbs"
+  Include CurrentPath & "\node_modules\" + pkg + "\index.vbs"
 End Sub
 
 

@@ -3,6 +3,35 @@
 
 ' ================================== Job: vbspm-build ================================== 
 
+' ================= src : lib/core/globals.vbs ================= 
+With CreateObject("WScript.Shell")
+  CurrentPath=.CurrentDirectory
+  Wscript.Echo  "Base path: " & CurrentPath
+End With
+
+Sub Include(file)
+  Wscript.Echo "Include(" + file + ")"
+  
+  ' Dim cFS: cFS = new FS
+  Dim content: content = cFS.ReadFile(file)
+  if content <> "" Then ExecuteGlobal content
+End Sub
+
+
+Public Sub Import(pkg)
+  Wscript.Echo "Import(" + Pkg + ")"
+  Include CurrentPath & "\node_modules\" + pkg + "\index.vbs"
+End Sub
+
+
+public Sub Echo(msg)
+    Wscript.Echo msg
+End Sub
+
+
+Public Function jobSrc(file)
+  jobSrc = "<script language=""VBScript"" src=""" + file + """/>"
+End Function
 ' ================= src : lib/core/FSO/FSO.vbs ================= 
 ' ==============================================================================================
 ' Implementation of several use cases of FileSystemObject into this class
@@ -93,35 +122,11 @@ End Class
 Dim cFS
 set cFS = new FSO
 Function log(msg)
-cFS.WriteLog "bin\\build.log", msg, false
+cFS.WriteLog currentPath & "\build.log", msg, false
 End Function
 log "Execution Started for file"
 
 
-' ================= src : lib/core/globals.vbs ================= 
-Sub Include(file)
-  Wscript.Echo "Include(" + file + ")"
-  
-  Dim cFS: cFS = new FS
-  Dim content: content = cFS.ReadFile(file)
-  if content <> "" Then ExecuteGlobal content
-End Sub
-
-
-Public Sub Import(pkg)
-  Wscript.Echo "Import(" + Pkg + ")"
-  Include "./node_modules/" + pkg + "/index.vbs"
-End Sub
-
-
-public Sub Echo(msg)
-    Wscript.Echo msg
-End Sub
-
-
-Public Function jobSrc(file)
-  jobSrc = "<script language=""VBScript"" src=""" + file + """/>"
-End Function
 ' ================= src : lib/core/Wshell.vbs ================= 
 
 ' ================= src : lib/core/VbsJson/VbsJson.vbs ================= 

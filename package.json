@@ -1,6 +1,6 @@
 {
   "name": "vbspm",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Vbs Package Manager",
   "main": "vbspm.vbs",
   "bin": "vbspm.vbs",

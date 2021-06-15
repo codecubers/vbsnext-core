@@ -1,3 +1,5 @@
 node_modules
 .npmrc
 *.pfx
+build.log
+build/build.log
