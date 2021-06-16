@@ -1,0 +1,15 @@
+node_modules
+.npmrc
+*.pfx
+build.log
+build/build.log
+
+bin/wsfParser.js
+lib/trash
+lib/pkg
+test.cmd
+test.wsf
+*.test.wsf
+lib/core/Signtool/self-sign-cert.ps1
+lib/core/Signtool/sign-file.vbs
+lib/CPOL/compare_line_by_line.cmd

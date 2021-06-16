@@ -29,13 +29,14 @@ Class FSO
 		End If
 	End Sub
 	
-	Public Sub WriteLog(strFileName, strMessage, overwrite)
+	Public Sub WriteFile(strFileName, strMessage, overwrite)
 		Const ForReading = 1
 		Const ForWriting = 2
 		Const ForAppending = 8
 		Dim mode
+    	Dim oFile
 		
-        mode = ForWriting
+    	mode = ForWriting
 		If Not overwrite Then
 			mode = ForAppending
 		End If
@@ -79,4 +80,12 @@ Class FSO
 		objFSO.DeleteFile(file)
 		On Error Goto 0
 	End Sub
+
+  Public Function GetExtn(file)
+    GetExtn = ""
+    on Error Resume Next
+    GetExtn = objFSO.GetExtensionName(file)
+    On Error goto 0
+  End Function
+
 End Class

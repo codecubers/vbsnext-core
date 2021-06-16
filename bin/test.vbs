@@ -1,1 +1,3 @@
-Wscript.Echo "Build completed Successfully."
+Include "bin\test-cls.vbs"
+set test = new BUILDTEST
+Wscript.Echo "Build completed " & test & "."

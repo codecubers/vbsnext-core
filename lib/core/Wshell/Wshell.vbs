@@ -62,7 +62,7 @@ Class WShell
     End Property
      
 
-    Private dir
+    ' Private dir
     Private oThis
     
     Private Sub Class_Initialize

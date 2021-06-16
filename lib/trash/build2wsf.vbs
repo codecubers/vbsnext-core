@@ -1,3 +1,8 @@
+
+Function jobSrc(file)
+  jobSrc = "<script language=""VBScript"" src=""" + file + """/>"
+End Function
+
 Include ".\node_modules\VbsJson\index.vbs"
 Set json = New VbsJson
 

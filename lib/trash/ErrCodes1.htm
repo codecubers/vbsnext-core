@@ -1,0 +1,30 @@
+<HTML>
+<HEAD><TITLE>VBScript Error Message Generator</TITLE>
+<SCRIPT LANGUAGE="VBSCRIPT">
+Sub GenerateErrorList()
+   On Error Resume Next
+   Dim lCtr
+
+   For lCtr = 1 To 50000
+      Err.Raise lCtr
+      If Err.Description <> "Unknown runtime error" Then 
+         Document.Write "<TR><TD>" & Err.Number
+         Document.Write "<TD>" & Err.Description 
+      End If
+      Err.Clear
+   Next
+End Sub
+</SCRIPT>
+<HEAD>
+<BODY>
+<CENTER>
+<H2>VBScript Error Codes</H2>
+<TABLE>
+<TR>
+<TH>Error Code</TH><TH>Description</TH>
+<SCRIPT LANGUAGE="VBSCRIPT"> 
+   GenerateErrorList()
+</SCRIPT>
+</CENTER>
+</BODY>
+</HTML>
