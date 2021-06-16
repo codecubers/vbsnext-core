@@ -5,6 +5,7 @@
         </runtime>
 
         <script language="VBScript" src="lib/core/init.vbs" />
+        <script language="VBScript" src="lib/core/ArrayUtil/ArrayUtil.vbs" />
         <script language="VBScript" src="lib/core/FSO/FSO.vbs" />
         <script language="VBScript" src="lib/core/Wshell/Wshell.vbs" />
         <script language="VBScript" src="lib/core/VbsJson/VbsJson.vbs" />    

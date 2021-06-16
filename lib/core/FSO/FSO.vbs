@@ -60,6 +60,10 @@ Class FSO
 		GetFileDir = objFSO.GetParentFolderName(objFile) 
 	End Function
 	
+	Public Function GetFilePath(ByVal file)
+		GetFilePath = objFSO.GetFile(file).Path 
+	End Function
+
 	Public Function ReadFile(file)
 		If Not FileExists(file) Then 
 			Wscript.Echo "File " & file & " does not exists."

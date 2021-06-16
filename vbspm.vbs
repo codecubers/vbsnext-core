@@ -5,6 +5,45 @@
 
 ' ================= src : lib/core/init.vbs ================= 
 Option Explicit
+' ================= src : lib/core/ArrayUtil/ArrayUtil.vbs ================= 
+Class ArrayUtil
+
+    Public Function toString(arr)
+        If Not isArray(arr) Then
+            toString = "Supplied parameter is not an array."
+            Exit Function
+        End If
+
+        Dim s, i
+        s = "Array{" & UBound(arr) & "} [" & vbCrLf
+        For i = 0  to UBound(arr)
+            s = s & vbTab & "[" & i & "] => [" & arr(i) & "]"
+            if i < UBound(arr) Then s = s & ", "
+            s = s &  vbCrLf
+        Next
+        s = s & "]"
+        toString = s
+
+    End Function
+
+    Public Function contains(arr, s) 
+        If Not isArray(arr) Then
+            toString = "Supplied parameter is not an array."
+            Exit Function
+        End If
+
+        Dim i, bFlag
+        bFlag = false
+        For i = 0  to UBound(arr)
+            If arr(i) = s Then
+                bFlag = true
+                Exit For
+            End If
+        Next
+        contains = bFlag
+    End Function
+
+End Class
 ' ================= src : lib/core/FSO/FSO.vbs ================= 
 ' ==============================================================================================
 ' Implementation of several use cases of FileSystemObject into this class
@@ -68,6 +107,10 @@ Class FSO
 		GetFileDir = objFSO.GetParentFolderName(objFile) 
 	End Function
 	
+	Public Function GetFilePath(ByVal file)
+		GetFilePath = objFSO.GetFile(file).Path 
+	End Function
+
 	Public Function ReadFile(file)
 		If Not FileExists(file) Then 
 			Wscript.Echo "File " & file & " does not exists."
@@ -836,27 +879,46 @@ end function
 ' ================= src : lib/core/globals.vbs ================= 
 Dim baseDir
 Dim cFS
+Redim IncludedScripts(-1)
+Dim arrUtil
 set cFS = new FSO
+set arrUtil = new ArrayUtil
 
 
 public Sub Echo(msg)
   Wscript.Echo msg
 End Sub
+
 Function log(msg)
   cFS.WriteFile "build.log", msg, false
 End Function
+
 log "================================= Call ================================="
 
 Sub Include(file)
   log "Include(" + file + ")"
+  if Lcase(cFS.GetExtn(file)) = "" Then
+    log "File extension missing. Adding .vbs"
+    file = file + ".vbs"
+  end if
+  Dim path: path = cFS.GetFilePath(file)
+  log "File full path: " & path
   
-  Dim content: content = cFS.ReadFile(file)
-  if content <> "" Then 
-    ' Dim pkg
-    ' pkg = Replace(file, "\node_modules\", "")
-    ' pkg = Replace(pkg, "\index.vbs", "")
-    ' cFS.WriteFile "build\imported\" & pkg & ".vbs", content, true
-    ExecuteGlobal content
+  ' Dim pkg
+  ' pkg = Replace(file, "\node_modules\", "")
+  ' pkg = Replace(pkg, "\index.vbs", "")
+  ' cFS.WriteFile "build\imported\" & pkg & ".vbs", content, true
+  If Not arrUtil.contains(IncludedScripts, path) Then
+    Redim Preserve IncludedScripts(UBound(IncludedScripts)+1)
+    IncludedScripts(UBound(IncludedScripts)) = path
+    Dim content: content = cFS.ReadFile(file)
+    if content <> "" Then 
+      ExecuteGlobal content
+    Else
+      log "File content is empty. Not loaded."
+    End If
+  Else
+    log "File: " & path & " already loaded."
   End If
 End Sub
 
@@ -892,25 +954,15 @@ End If
 ' TODO: Assess all possible combinations a user can send in command line
 file = baseDir & "\" & file
 
-if Lcase(cFS.GetExtn(file)) = "vbs" Then
-  log "File extension is: .vbs"
-Else
+if Lcase(cFS.GetExtn(file)) = "" Then
   log "File extension missing. Adding .vbs"
   file = file + ".vbs"
 end if
 
-log "File: " & file
-
-
-Dim script
-script = cFS.ReadFile(file)
-if script = "" Then
-  log "No file supplied or is empty."
-  Wscript.Quit
-End if
-
-
+log "Main Script: " & file
 
 '=========================== 
-Execute script
+Include file
 '=========================== 
+
+' Wscript.Echo arrUtil.toString(IncludedScripts)

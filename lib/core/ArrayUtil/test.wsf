@@ -1,0 +1,24 @@
+<package>
+    <job id="Test0">
+        <script language="VBscript" src="ArrayUtil.vbs" />
+        <script language="VBScript">
+            arr = Array("item1", "2", "I'm 3")
+            set au = new ArrayUtil
+            Wscript.Echo au.toString(arr)
+        </script>
+    </job>
+    <job id="Test1">
+        <script language="VBscript" src="ArrayUtil.vbs" />
+        <script language="VBScript">
+            arr = Array("item1", "item2", "item3")
+            set au = new ArrayUtil
+            Wscript.Echo "item1 contains: " & au.contains(arr, "item1")
+            Wscript.Echo "[ item1] contains: " & au.contains(arr, " item1")
+            Wscript.Echo "[item1 ] contains: " & au.contains(arr, "item1 ")
+            Wscript.Echo "Item1 contains: " & au.contains(arr, "Item1")
+            Wscript.Echo "item2 contains: " & au.contains(arr, "item2")
+            Wscript.Echo "item3 contains: " & au.contains(arr, "item3")
+            Wscript.Echo "item4 contains: " & au.contains(arr, "item4")
+        </script>
+    </job>    
+</package>
