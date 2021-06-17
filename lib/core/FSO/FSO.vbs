@@ -16,6 +16,10 @@ Class FSO
 	public Sub setDir(s)
 		dir = s
 	End Sub
+
+	Public Function getDir
+		getDir = dir
+	End Function
 	
 	Public Function GetFSO
 		Set GetFSO = objFSO
@@ -56,6 +60,7 @@ Class FSO
 	' ===================== Function Routines =====================
 
 	Public Function GetFileDir(ByVal file)
+		Dim objFile
 		Set objFile = objFSO.GetFile(file)
 		GetFileDir = objFSO.GetParentFolderName(objFile) 
 	End Function
@@ -85,11 +90,11 @@ Class FSO
 		On Error Goto 0
 	End Sub
 
-  Public Function GetExtn(file)
-    GetExtn = ""
-    on Error Resume Next
-    GetExtn = objFSO.GetExtensionName(file)
-    On Error goto 0
-  End Function
+	Public Function GetExtn(file)
+		GetExtn = ""
+		on Error Resume Next
+		GetExtn = objFSO.GetExtensionName(file)
+		On Error goto 0
+	End Function
 
 End Class

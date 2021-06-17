@@ -910,7 +910,7 @@ Public Sub Import(pkg)
   log "Import(" + Pkg + ")"
   Include baseDir & "\node_modules\" + pkg + "\index.vbs"
 End Sub
-' ================= src : lib/core/include-run.vbs ================= 
+' ================= src : lib/core/include-build.vbs ================= 
 
 Public Sub Include(file)
   log "Include(" + file + ")"
@@ -920,20 +920,6 @@ Public Sub Include(file)
   end if
   Dim path: path = cFS.GetFilePath(file)
   log "File full path: " & path
-  
-  If Not arrUtil.contains(IncludedScripts, path) Then
-    Redim Preserve IncludedScripts(UBound(IncludedScripts)+1)
-    IncludedScripts(UBound(IncludedScripts)) = path
-    Dim content: content = cFS.ReadFile(file)
-    if content <> "" Then 
-      'cFS.WriteFile "build\bundle.vbs", content, false
-      ExecuteGlobal content
-    Else
-      log "File content is empty. Not loaded."
-    End If
-  Else
-    log "File: " & path & " already loaded."
-  End If
 End Sub
 ' ================= src : lib/core/params.vbs ================= 
 log "Execution Started for file"
@@ -964,22 +950,6 @@ log "Main Script: " & file
 
 ' ================= inline ================= 
 
-' Just before start writing Include/Import file contents to the builder,
-' Write the vbspm.vbs file contents
-Dim d: d = cFS.GetFileDir(WScript.ScriptFullName)
-
-Dim core: core = cFS.ReadFile(d & "\vbspm-build.vbs")
-cFS.WriteFile "build\bundle.vbs", core, true
-
 '===========================
 Include file
 '===========================
-
-' Wscript.Echo arrUtil.toString(IncludedScripts)
-Dim i
-for i = 0 to UBound(IncludedScripts) step 1
-core = cFS.ReadFile(IncludedScripts(i))
-core = Replace(core, "Option Explicit", "")
-core = vbCrLf & vbCrLf & "'================= File: " & IncludedScripts(i) & " =================" & vbCrLf & core
-cFS.WriteFile "build\bundle.vbs", core, false
-next

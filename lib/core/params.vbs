@@ -23,9 +23,3 @@ if Lcase(cFS.GetExtn(file)) = "" Then
 end if
 
 log "Main Script: " & file
-
-'=========================== 
-Include file
-'=========================== 
-
-' Wscript.Echo arrUtil.toString(IncludedScripts)
