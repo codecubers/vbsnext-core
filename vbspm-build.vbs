@@ -881,75 +881,11 @@ function fmt( str, args )
 
 	fmt = res
 end function
-' ================= src : lib/core/globals.vbs ================= 
-Dim baseDir
-Dim cFS
-Redim IncludedScripts(-1)
-Dim arrUtil
-set cFS = new FSO
-set arrUtil = new ArrayUtil
-
-
-public Sub Echo(msg)
-  Wscript.Echo msg
-End Sub
-
-Function log(msg)
-  cFS.WriteFile "build.log", msg, false
-End Function
-
-With CreateObject("WScript.Shell")
-  baseDir=.CurrentDirectory
-End With
-log "Base path: " & baseDir
-cFS.setDir(baseDir)
-
-log "================================= Call ================================="
-
-Public Sub Import(pkg)
-  log "Import(" + Pkg + ")"
-  Include baseDir & "\node_modules\" + pkg + "\index.vbs"
-End Sub
 ' ================= src : lib/core/include-build.vbs ================= 
 
 Public Sub Include(file)
-  log "Include(" + file + ")"
-  if Lcase(cFS.GetExtn(file)) = "" Then
-    log "File extension missing. Adding .vbs"
-    file = file + ".vbs"
-  end if
-  Dim path: path = cFS.GetFilePath(file)
-  log "File full path: " & path
+  ' DO NOT REMOVE THIS Sub Routine
 End Sub
-' ================= src : lib/core/params.vbs ================= 
-log "Execution Started for file"
-
-Dim file
-file = WScript.Arguments.Named("file")
-If file = "" Then
-    log "Script file not provided as a named argument [/file:]"
-    if Wscript.Arguments.count > 0 then
-      file = Wscript.Arguments(0) 
-      if file = "" Then
-        log "No file argument provided."
-        Wscript.Quit
-      End If
-    else 
-      file = "index.vbs"
-    end if
-End If
-' TODO: Assess all possible combinations a user can send in command line
-file = baseDir & "\" & file
-
-if Lcase(cFS.GetExtn(file)) = "" Then
-  log "File extension missing. Adding .vbs"
-  file = file + ".vbs"
-end if
-
-log "Main Script: " & file
-
-' ================= inline ================= 
-
-'===========================
-Include file
-'===========================
+Public Sub Import(file)
+  ' DO NOT REMOVE THIS Sub Routine
+End Sub

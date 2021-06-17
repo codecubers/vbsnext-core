@@ -12,16 +12,6 @@
         <script language="VBScript" src="lib/core/JSONToXML/JSONToXML.vbs" />    
         <script language="VBScript" src="lib/core/Signtool/Signtool.vbs" />
         <script language="VBScript" src="lib/CPOL/vb_format_function.vbs" />
-        <script language="VBScript" src="lib/core/globals.vbs" />
-
         <script language="VBScript" src="lib/core/include-build.vbs" />
-
-        <script language="VBScript" src="lib/core/params.vbs" />
-
-        <script language="VBScript">
-            '=========================== 
-            Include file
-            '=========================== 
-        </script>
     </job>
 </package>
