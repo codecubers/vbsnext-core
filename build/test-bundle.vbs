@@ -16,3 +16,17 @@ End Sub
 Public Sub Import(file)
   ' DO NOT REMOVE THIS Sub Routine
 End Sub
+
+
+'================= File: C:\Users\nanda\git\xps.local.npm\vbspm\bin\test-cls.vbs =================
+Class BUILDTEST
+    Public default Property Get Status
+            Status = "Successfully.."
+    End Property
+End Class
+
+
+'================= File: C:\Users\nanda\git\xps.local.npm\vbspm\bin\test.vbs =================
+Include "bin\test-cls.vbs"
+set test = new BUILDTEST
+Wscript.Echo "Build completed " & test & "."

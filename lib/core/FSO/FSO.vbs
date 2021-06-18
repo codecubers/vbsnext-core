@@ -25,13 +25,21 @@ Class FSO
 		Set GetFSO = objFSO
 	End Function
 
+  Public Function FolderExists(fol)
+    FolderExists = objFSO.FolderExists(fol)
+  End Function
     ' ===================== Sub Routines =====================
 
-	Public Sub CreateFolder(fol)
-		If Not objFSO.FolderExists(fol) Then
+
+	Public Function CreateFolder(fol)
+    CreateFolder = false
+		If FolderExists(fol) Then
+      CreateFolder = true
+    Else
 			objFSO.CreateFolder(fol)
+      CreateFolder = FolderExists(fol)
 		End If
-	End Sub
+	End Function
 	
 	Public Sub WriteFile(strFileName, strMessage, overwrite)
 		Const ForReading = 1
@@ -60,14 +68,49 @@ Class FSO
 	' ===================== Function Routines =====================
 
 	Public Function GetFileDir(ByVal file)
+    debugf "GetFileDir( %s )", Array(file)
 		Dim objFile
 		Set objFile = objFSO.GetFile(file)
 		GetFileDir = objFSO.GetParentFolderName(objFile) 
 	End Function
 	
 	Public Function GetFilePath(ByVal file)
-		GetFilePath = objFSO.GetFile(file).Path 
+    debugf "GetFilePath( %s )", Array(file)
+    Dim objFile
+    On Error Resume Next
+    set objFile = objFSO.GetFile(file)
+    On Error Goto 0
+    If IsObject(objFile) Then
+		  GetFilePath = objFile.Path 
+    Else
+      debugf "File %s not found; searching in directory %s", Array(file,dir)
+      On Error Resume Next
+      set objFile = objFile.GetFile(objFSO.BuildPath(dir, file))
+      On Error Goto 0
+      If IsObject(objFile) Then
+		    GetFilePath = objFile.Path 
+      Else
+        GetFilePath = "File [" & file & "] Not found"
+      End If
+    End If
 	End Function
+
+  ''' <summary>Returns a specified number of characters from a string.</summary>
+  ''' <param name="file">File Name</param>
+	Public Function GetFileName(ByVal file)
+		GetFileName = objFSO.GetFile(file).Name
+	End Function
+
+	Public Function GetFileExtn(file)
+		GetFileExtn = ""
+		on Error Resume Next
+		GetFileExtn = LCASE(objFSO.GetExtensionName(file))
+		On Error goto 0
+	End Function
+
+  Public Function GetBaseName(ByVal file)
+    GetBaseName = Replace(GetFileName(file), "." & GetFileExtn(file), "")
+  End Function
 
 	Public Function ReadFile(file)
 		If Not FileExists(file) Then 
@@ -90,11 +133,5 @@ Class FSO
 		On Error Goto 0
 	End Sub
 
-	Public Function GetExtn(file)
-		GetExtn = ""
-		on Error Resume Next
-		GetExtn = objFSO.GetExtensionName(file)
-		On Error goto 0
-	End Function
 
 End Class
