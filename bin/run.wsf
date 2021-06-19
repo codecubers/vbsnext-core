@@ -28,6 +28,12 @@
         <script language="VBScript"><![CDATA[
                 set arrUtil = new ArrayUtil
         ]]></script>
+        <script language="VBScript" src="lib/core/PathUtil/PathUtil.vbs" />
+        <script language="VBScript"><![CDATA[
+                set putil = new PathUtil  
+                putil.BasePath = baseDir
+                EchoX "Project location: %x", putil.BasePath          
+        ]]></script>
         <script language="VBScript" src="lib/core/FSO/FSO.vbs" />
         <script language="VBScript"><![CDATA[
                 set cFS = new FSO
@@ -48,12 +54,6 @@
                 vbspmDir = cFS.GetFileDir(WScript.ScriptFullName)
                 log "VBSPM Directory: " & vbspmDir
 
-        ]]></script>
-        <script language="VBScript" src="lib/core/PathUtil/PathUtil.vbs" />
-        <script language="VBScript"><![CDATA[
-                set putil = new PathUtil  
-                putil.BasePath = baseDir
-                EchoX "Project location: %x", putil.BasePath          
         ]]></script>
         <script language="VBScript" src="lib/core/globals.vbs" />
         <script language="VBScript" src="lib/core/include-run.vbs" />
