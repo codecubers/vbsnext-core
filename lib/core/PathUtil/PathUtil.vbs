@@ -16,7 +16,9 @@ Class PathUtil
         set oFSO = CreateObject("Scripting.FileSystemObject")
         m_script = Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,"\")-1)
         m_base = m_script
-        m_temp = m_script
+        m_temp = Array()
+        Redim Preserve m_temp(0)
+        m_temp(0) = m_script
     End Sub
 
     Public Property Get ScriptPath
@@ -33,14 +35,19 @@ Class PathUtil
         EchoDX "New Base Path: %x", m_base
     End Property
     Public Property Get TempBasePath
-        TempBasePath = m_temp
+        TempBasePath = m_temp(UBound(m_temp))
     End Property
     Public Property Let TempBasePath(path)
         Do While endsWith(path, "\")
             path = Left(Path, Len(path)-1)
         Loop
-        m_temp = Resolve(path)
-        EchoDX "New Temp Base Path: %x", m_temp
+        If arrUtil.contains(m_temp, path) Then
+            EchoDX "Temp Path %x already exists; skipped", path
+        Else
+            Redim Preserve m_temp(Ubound(m_temp)+1)
+            m_temp(Ubound(m_temp)) = Resolve(path)
+            EchoDX "New Temp Base Path: %x", m_temp(Ubound(m_temp))
+        End If
     End Property
 
     Function Resolve(path)
@@ -86,13 +93,18 @@ Class PathUtil
                 Exit Function
             End If
 
-            lPath = oFSO.BuildPath(m_temp, path)
-            EchoDX "Adding Temp Base path %x to path %x. New Path: %x", Array(m_temp, path, lPath)
-            If oFSO.FileExists(lPath) Then
-                EchoD "Resolved with Temp Base"
-                Resolve = oFSO.GetFile(lPath).path
-                Exit Function
-            End If
+            Dim i
+            i = Ubound(m_temp)
+            do
+                lPath = oFSO.BuildPath(m_temp(i), path)
+                EchoDX "Adding Temp Base path (%x) %x to path %x. New Path: %x", Array(i, m_temp(i), path, lPath)
+                If oFSO.FileExists(lPath) Then
+                    EchoD "Resolved with Temp Base"
+                    Resolve = oFSO.GetFile(lPath).path
+                    Exit Function
+                End If
+                i = i - 1
+            Loop While i >= 0
 
             lPath = oFSO.BuildPath(m_script, path)
             EchoDX "Adding script path %x to path %x. New Path: %x", Array(m_script, path, lPath)

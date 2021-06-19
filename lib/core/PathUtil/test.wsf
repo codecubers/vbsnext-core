@@ -1,10 +1,27 @@
 <package>
     <job id="Test0">
         <script language="VBScript" src="../init.vbs" />
+        <script language="VBScript"><![CDATA[
+                Dim debug: debug = (WScript.Arguments.Named("debug") = "true")
+                if (debug) Then WScript.Echo "Debug is enabled"
+                Dim vbspmDir
+                Dim baseDir
+                Dim cFS
+                Redim IncludedScripts(-1)
+                Dim arrUtil
+                Dim buildDir
+                Dim createBundle: createBundle = false
+                Dim buildBundleFile: buildBundleFile = ""
+                Dim putil 
+
+                With CreateObject("WScript.Shell")
+                baseDir=.CurrentDirectory
+                End With
+        ]]></script>
         <script language="VBScript" src="../Console/Console.vbs" />
+        <script language="VBScript" src="../init-functions.vbs" />
         <script language="VBScript" src="../ArrayUtil/ArrayUtil.vbs" />
         <script language="VBScript" src="../FSO/FSO.vbs" />
-        <script language="VBScript" src="../globals.vbs" />
         <script language="VBScript" src="PathUtil.vbs" />
         <script language="VBScript" src="test.vbs" />
     </job>

@@ -35,4 +35,6 @@ Class ArrayUtil
         contains = bFlag
     End Function
 
+    'TODO: Add functionality to manage Array (redim, get last, add new etc.,)
+    'TODO: With ability to sort, reverse, avoid duplicates etc.,
 End Class

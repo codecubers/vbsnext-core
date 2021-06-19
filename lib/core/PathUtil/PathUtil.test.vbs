@@ -1,9 +1,9 @@
 
 
 
-' ================================== Job: vbspm-build ================================== 
+' ================================== Job: Test0 ================================== 
 
-' ================= src : lib/core/init.vbs ================= 
+' ================= src : ../init.vbs ================= 
 Option Explicit
 
 ' Judging by the declaration and description of the startsWith Java function, 
@@ -37,7 +37,7 @@ With CreateObject("WScript.Shell")
 baseDir=.CurrentDirectory
 End With
 
-' ================= src : lib/core/Console/Console.vbs ================= 
+' ================= src : ../Console/Console.vbs ================= 
 Class Console
 
     ' Author: Uwe Keim
@@ -90,7 +90,7 @@ Class Console
     end function
 
 End Class
-' ================= src : lib/core/init-functions.vbs ================= 
+' ================= src : ../init-functions.vbs ================= 
 Dim oConsole                         
 set oConsole = new Console
 PUblic Sub printf(str, args)
@@ -131,7 +131,7 @@ End Sub
 Public Sub EchoD(str) 
     EchoDX str, NULL
 End Sub
-' ================= src : lib/core/ArrayUtil/ArrayUtil.vbs ================= 
+' ================= src : ../ArrayUtil/ArrayUtil.vbs ================= 
 Class ArrayUtil
 
     Public Function toString(arr)
@@ -170,13 +170,9 @@ Class ArrayUtil
     End Function
 
     'TODO: Add functionality to manage Array (redim, get last, add new etc.,)
-    'TODO: With ability to sort, reverse, avoid duplicates etc.,
+
 End Class
-' ================= inline ================= 
-
-set arrUtil = new ArrayUtil
-
-' ================= src : lib/core/FSO/FSO.vbs ================= 
+' ================= src : ../FSO/FSO.vbs ================= 
 ' ==============================================================================================
 ' Implementation of several use cases of FileSystemObject into this class
 ' Author: Praveen Nandagiri (pravynandas@gmail.com)
@@ -314,28 +310,7 @@ Class FSO
 
 
 End Class
-' ================= inline ================= 
-
-set cFS = new FSO
-
-cFS.setDir(baseDir)
-
-buildDir = baseDir & "\build"
-If cFS.CreateFolder(buildDir) Then
-createBundle = true
-Else
-EchoX "Unable to create build directory at [%x]. Script will not be bundled. Please try again.", buildDir
-End If
-
-Public Function log(msg)
-cFS.WriteFile "build.log", msg, false
-End Function
-
-vbspmDir = cFS.GetFileDir(WScript.ScriptFullName)
-log "VBSPM Directory: " & vbspmDir
-
-
-' ================= src : lib/core/PathUtil/PathUtil.vbs ================= 
+' ================= src : PathUtil.vbs ================= 
 Class PathUtil
 
     Private Property Get DOT
@@ -379,13 +354,9 @@ Class PathUtil
         Do While endsWith(path, "\")
             path = Left(Path, Len(path)-1)
         Loop
-        If arrUtil.contains(m_temp, path) Then
-            EchoDX "Temp Path %x already exists; skipped", path
-        Else
-            Redim Preserve m_temp(Ubound(m_temp)+1)
-            m_temp(Ubound(m_temp)) = Resolve(path)
-            EchoDX "New Temp Base Path: %x", m_temp(Ubound(m_temp))
-        End If
+        Redim Preserve m_temp(Ubound(m_temp)+1)
+        m_temp(Ubound(m_temp)) = Resolve(path)
+        EchoDX "New Temp Base Path: %x", m_temp(Ubound(m_temp))
     End Property
 
     Function Resolve(path)
@@ -431,18 +402,13 @@ Class PathUtil
                 Exit Function
             End If
 
-            Dim i
-            i = Ubound(m_temp)
-            do
-                lPath = oFSO.BuildPath(m_temp(i), path)
-                EchoDX "Adding Temp Base path (%x) %x to path %x. New Path: %x", Array(i, m_temp(i), path, lPath)
-                If oFSO.FileExists(lPath) Then
-                    EchoD "Resolved with Temp Base"
-                    Resolve = oFSO.GetFile(lPath).path
-                    Exit Function
-                End If
-                i = i - 1
-            Loop While i >= 0
+            lPath = oFSO.BuildPath(m_temp, path)
+            EchoDX "Adding Temp Base path %x to path %x. New Path: %x", Array(m_temp, path, lPath)
+            If oFSO.FileExists(lPath) Then
+                EchoD "Resolved with Temp Base"
+                Resolve = oFSO.GetFile(lPath).path
+                Exit Function
+            End If
 
             lPath = oFSO.BuildPath(m_script, path)
             EchoDX "Adding script path %x to path %x. New Path: %x", Array(m_script, path, lPath)
@@ -463,122 +429,67 @@ Class PathUtil
     End Sub
 
 End Class ' PathUtil
-' ================= inline ================= 
+' ================= src : test.vbs ================= 
+Dim pu
+set pu = new PathUtil
 
-set putil = new PathUtil
-putil.BasePath = baseDir
-EchoX "Project location: %x", putil.BasePath
-
-' ================= src : lib/core/globals.vbs ================= 
-log "================================= Call ================================="
-
-log "Base path: " & baseDir
-
-Public Sub Import(pkg)
-  log "Import(" + Pkg + ")"
-  Include baseDir & "\node_modules\" + pkg + "\index.vbs"
-End Sub
-' ================= src : lib/core/include-run.vbs ================= 
-' Dim iThread: iThread = 1
-' Public Function Thread(i)
-'     EchoX "Thread %x", i
-'     i = i + 1
-'     Thread = i
-' End Function
-Dim sThreadBase: sThreadBase = baseDir
-Public Function Include(file)
-  log "Include(" + file + ")"
-  if cFS.GetFileExtn(file) = "" Then
-    log "File extension missing. Adding .vbs"
-    file = file + ".vbs"
-  end if
-  Dim path
-  'path = cFS.GetFilePath(file)
-  putil.TempBasePath = sThreadBase
-  path = putil.Resolve(file)
-  log "File full path: " & path
-  'cFS.setDir(cFS.GetFileDir(path))
-  sThreadBase = cFS.GetFileDir(path)
-  
-  If Not arrUtil.contains(IncludedScripts, path) Then
-    Redim Preserve IncludedScripts(UBound(IncludedScripts)+1)
-    IncludedScripts(UBound(IncludedScripts)) = path
-    Dim content: content = cFS.ReadFile(path)
-    if content <> "" Then 
-      'cFS.WriteFile "build\bundle.vbs", content, false
-      'EchoX "File: %x", file
-      'EchoX "Thread ---> %x", iThread
-      'content = "iThread = Thread(iThread)" & VBCRLF & content
-      'EchoX "Content: %x", content
-      ExecuteGlobal content
-    Else
-      log "File content is empty. Not loaded."
-    End If
-  Else
-    log "File: " & path & " already loaded."
-  End If
-  Include = Include
+Function test
+    EchoX "0) \. => %x", pu.Resolve("\.")
+    EchoX "1) . => %x", pu.Resolve(".")
+    EchoX "2) .\ => %x", pu.Resolve(".\")
+    EchoX "3) .. => %x", pu.Resolve("..")
+    EchoX "4) ..\ => %x", pu.Resolve("..\")
+    EchoX "5) ..\.\ => %x", pu.Resolve("..\.\")
+    EchoX "6) ..\..\ => %x", pu.Resolve("..\..\")
+    EchoX "7) ..\.\.\..\ => %x", pu.Resolve("..\.\.\..\")
+    EchoX "8) PathUtil.vbs => %x", pu.Resolve("PathUtil.vbs")
+    EchoX "9) .\PathUtil.vbs => %x", pu.Resolve(".\PathUtil.vbs")
+    EchoX "10) .\.\PathUtil.vbs => %x", pu.Resolve(".\.\PathUtil.vbs")
+    EchoX "11) pkg\pkg.vbs => %x", pu.Resolve("pkg\pkg.vbs")
+    EchoX "12) .\pkg\pkg.vbs => %x", pu.Resolve(".\pkg\pkg.vbs")
+    EchoX "13) C:\Users\nanda\git\xps.local.npm\vbspm\lib\core\PathUtil\pkg\pkg.vbs => %x", pu.Resolve("C:\Users\nanda\git\xps.local.npm\vbspm\lib\core\PathUtil\pkg\pkg.vbs")
+    EchoX "14) pkg1\pkg1.vbs => %x", pu.Resolve("pkg1\pkg1.vbs")
+    EchoX "15) .\pkg1\pkg1.vbs => %x", pu.Resolve(".\pkg1\pkg1.vbs")
+    EchoX "16) C:\Users\nanda\git\xps.local.npm\vbspm\lib\core\ArrayUtil\pkg1\pkg1.vbs => %x", pu.Resolve("C:\Users\nanda\git\xps.local.npm\vbspm\lib\core\ArrayUtil\pkg1\pkg1.vbs")
 End Function
-' ================= src : lib/core/params.vbs ================= 
-log "Execution Started for file"
 
-Dim file
-file = WScript.Arguments.Named("file")
-If file = "" Then
-    log "Script file not provided as a named argument [/file:]"
-    if Wscript.Arguments.count > 0 then
-      file = Wscript.Arguments(0) 
-      if file = "" Then
-        log "No file argument provided."
-        Wscript.Quit
-      End If
-    else 
-      file = "index.vbs"
-    end if
-End If
-' TODO: Assess all possible combinations a user can send in command line
-file = baseDir & "\" & file
+Echo "Hellow"
+EchoX "Hellow %x", "World"
+EchoX "Hellow %x here comes %x", Array("World", "VbScript")
+EchoD "Debug Only: Hellow"
+EchoDX "Debug Only: Hellow %x", "World"
+EchoDX "Debug Only: Hellow %x here comes %x", Array("World", "VbScript")
 
-if cFS.GetFileExtn(file) = "" Then
-  log "File extension missing. Adding .vbs"
-  file = file + ".vbs"
-end if
+EchoX "Default ScriptPath => %x", pu.ScriptPath
+EchoX "Default BasePath => %x", pu.BasePath
+EchoX "Default Last TempBasePath => %x", pu.TempBasePath
+' test
 
-log "Main Script: " & file
-buildBundleFile = buildDir & "\" & cFS.GetBaseName(file) &  "-bundle.vbs"
-log "buildBundleFile: " & buildBundleFile
+Echo "Setting BasePath to C:\Users\nanda\git\xps.local.npm\vbspm\lib\core\PathUtil"
+pu.BasePath = "C:\Users\nanda\git\xps.local.npm\vbspm\lib\core\PathUtil"
+EchoX "BasePath => %x", pu.BasePath
+' test
 
+Echo "Setting TempBasePath to C:\Users\nanda\git\xps.local.npm\vbspm\lib\core\PathUtil\"
+pu.TempBasePath = "C:\Users\nanda\git\xps.local.npm\vbspm\lib\core\PathUtil\"
+EchoX "Last TempBasePath => %x", pu.TempBasePath
 
-' ================= src : lib/core/bundler.vbs ================= 
-Sub BundleScript(file, overwrite)
-    Dim isOverwrite: isOverwrite = (overwrite = true)
-    Dim content: content = cFS.ReadFile(file)
-    if createBundle Then
-        cFS.WriteFile buildBundleFile, content, isOverwrite
-    End If
-    End Sub
+Echo "Setting TempBasePath to ..\ArrayUtil"
+pu.TempBasePath = "..\ArrayUtil"
+EchoX "Last TempBasePath => %x", pu.TempBasePath
+' test
 
-    Sub BundleScriptStr(content, overwrite)
-    Dim isOverwrite: isOverwrite = (overwrite = true)
-    if createBundle Then
-        cFS.WriteFile buildBundleFile, content, isOverwrite
-    End If
-End Sub
+' Echo "Setting BasePath to ..\..\..\build"
+' pu.BasePath = "..\..\..\build"
+' EchoX "BasePath => %x", pu.BasePath
+' test
 
+' Echo "Setting BasePath to ..\..\build"
+' pu.BasePath = "..\..\build"
+' EchoX "BasePath => %x", pu.BasePath
+' test
 
-' Just before start writing Include/Import file contents to the builder,
-' Write the vbspm.vbs file contents
-BundleScript vbspmDir & "\vbspm-build.vbs", true
-
-'===========================
-Include file
-'===========================
-
-' Wscript.Echo arrUtil.toString(IncludedScripts)
-Dim i, core
-for i = UBound(IncludedScripts) to 0 step -1
-    core = cFS.ReadFile(IncludedScripts(i))
-    core = Replace(core, "Option Explicit", "")
-    core = vbCrLf & vbCrLf & "'================= File: " & IncludedScripts(i) & " =================" & vbCrLf & core
-    BundleScriptStr core, false
-next
+' Echo "Setting BasePath to .\"
+' pu.BasePath = ".\"
+' EchoX "BasePath => %x", pu.BasePath
+' test

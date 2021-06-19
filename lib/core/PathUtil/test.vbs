@@ -28,23 +28,24 @@ EchoD "Debug Only: Hellow"
 EchoDX "Debug Only: Hellow %x", "World"
 EchoDX "Debug Only: Hellow %x here comes %x", Array("World", "VbScript")
 
-' EchoX "Default ScriptPath => %x", pu.ScriptPath
-' EchoX "Default BasePath => %x", pu.BasePath
+EchoX "Default ScriptPath => %x", pu.ScriptPath
+EchoX "Default BasePath => %x", pu.BasePath
+EchoX "Default Last TempBasePath => %x", pu.TempBasePath
 ' test
 
 Echo "Setting BasePath to C:\Users\nanda\git\xps.local.npm\vbspm\lib\core\PathUtil"
 pu.BasePath = "C:\Users\nanda\git\xps.local.npm\vbspm\lib\core\PathUtil"
 EchoX "BasePath => %x", pu.BasePath
-test
+' test
 
-Echo "Setting BasePath to C:\Users\nanda\git\xps.local.npm\vbspm\lib\core\PathUtil\"
-pu.BasePath = "C:\Users\nanda\git\xps.local.npm\vbspm\lib\core\PathUtil\"
-EchoX "BasePath => %x", pu.BasePath
+Echo "Setting TempBasePath to C:\Users\nanda\git\xps.local.npm\vbspm\lib\core\PathUtil\"
+pu.TempBasePath = "C:\Users\nanda\git\xps.local.npm\vbspm\lib\core\PathUtil\"
+EchoX "Last TempBasePath => %x", pu.TempBasePath
 
-Echo "Setting BasePath to ..\ArrayUtil"
-pu.BasePath = "..\ArrayUtil"
-EchoX "BasePath => %x", pu.BasePath
-test
+Echo "Setting TempBasePath to ..\ArrayUtil"
+pu.TempBasePath = "..\ArrayUtil"
+EchoX "Last TempBasePath => %x", pu.TempBasePath
+' test
 
 ' Echo "Setting BasePath to ..\..\..\build"
 ' pu.BasePath = "..\..\..\build"
