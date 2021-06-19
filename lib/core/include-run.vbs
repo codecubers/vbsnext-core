@@ -1,20 +1,34 @@
-
-Public Sub Include(file)
+' Dim iThread: iThread = 1
+' Public Function Thread(i)
+'     EchoX "Thread %x", i
+'     i = i + 1
+'     Thread = i
+' End Function
+Dim sThreadBase: sThreadBase = baseDir
+Public Function Include(file)
   log "Include(" + file + ")"
   if cFS.GetFileExtn(file) = "" Then
     log "File extension missing. Adding .vbs"
     file = file + ".vbs"
   end if
-  Dim path: path = cFS.GetFilePath(file)
+  Dim path
+  'path = cFS.GetFilePath(file)
+  putil.TempBasePath = sThreadBase
+  path = putil.Resolve(file)
   log "File full path: " & path
-  cFS.setDir(cFS.GetFileDir(file))
+  'cFS.setDir(cFS.GetFileDir(path))
+  sThreadBase = cFS.GetFileDir(path)
   
   If Not arrUtil.contains(IncludedScripts, path) Then
     Redim Preserve IncludedScripts(UBound(IncludedScripts)+1)
     IncludedScripts(UBound(IncludedScripts)) = path
-    Dim content: content = cFS.ReadFile(file)
+    Dim content: content = cFS.ReadFile(path)
     if content <> "" Then 
       'cFS.WriteFile "build\bundle.vbs", content, false
+      'EchoX "File: %x", file
+      'EchoX "Thread ---> %x", iThread
+      'content = "iThread = Thread(iThread)" & VBCRLF & content
+      'EchoX "Content: %x", content
       ExecuteGlobal content
     Else
       log "File content is empty. Not loaded."
@@ -22,4 +36,5 @@ Public Sub Include(file)
   Else
     log "File: " & path & " already loaded."
   End If
-End Sub
+  Include = Include
+End Function

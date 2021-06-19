@@ -1,0 +1,61 @@
+
+
+<package>
+    <job id="Test0">
+        <script language="VBScript" src="Collection.vbs" />
+                        <script language="VBScript">
+
+                ' Set coll = CreateObject("Scripting.Dictionary")
+                ' coll.Add 0, "5"
+                ' coll.Add 4, "10"
+                ' coll.Add "textkey", "15"
+                ' Wscript.Echo coll.Count
+                ' Wscript.Echo coll.Item(0)
+                ' Wscript.Echo coll.Item(4)
+                ' wholeColl = ""
+                ' for each key in coll.Keys
+                '   wholeColl = wholeColl & key & " = " & coll.Item(key) & ", "
+                ' next
+                ' Wscript.Echo wholeColl
+
+
+                ' On Error Resume Next
+                set col1 = new Collection
+                col1.Name = "MyColl"
+                WScript.Echo col1.Name
+                col1.Add "a", "Apple"
+                col1.Add "b", "Ball"
+                col1.Add "c", "Cat"
+                col1.Add "d", "Dog"
+                Wscript.Echo col1.Count
+                Wscript.Echo col1.GetItem("a")
+                Wscript.Echo col1.GetItem("b")
+                Wscript.Echo col1.GetItem("c")
+                WScript.Echo col1.toCSV
+                On Error Resume Next
+                Wscript.Echo col1.GetItem("e")
+                WScript.Echo "Error: " & Err.Description
+                On Error Goto 0
+                col1.Remove "b"
+                Wscript.Echo col1.Count
+                On Error Resume Next
+                Wscript.Echo col1.GetItem("b")
+                WScript.Echo "Error: " & Err.Description
+                On Error Goto 0
+                col1.Add "b", "Bat"
+                Wscript.Echo col1.Count
+                Wscript.Echo col1.GetItem("b")
+                WScript.Echo col1.toCSV
+                ' col1.ReverseKeys
+                col1.RemoveAll
+                WScript.Echo col1.toCSV
+                If col1.isEmpty Then
+                    WScript.Echo "col1 is Empty"
+                Else
+                    WScript.Echo "Col1 is Not Empty"
+                    Wscript.Echo col1.toCSV
+                End If  
+                ' On Error Goto 0
+                </script>
+                </job>
+                </package>

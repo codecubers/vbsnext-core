@@ -1,0 +1,11 @@
+<package>
+    <job id="Test0">
+        <script language="VBScript" src="../init.vbs" />
+        <script language="VBScript" src="../Console/Console.vbs" />
+        <script language="VBScript" src="../ArrayUtil/ArrayUtil.vbs" />
+        <script language="VBScript" src="../FSO/FSO.vbs" />
+        <script language="VBScript" src="../globals.vbs" />
+        <script language="VBScript" src="PathUtil.vbs" />
+        <script language="VBScript" src="test.vbs" />
+    </job>
+</package>

@@ -6,8 +6,38 @@
 ' ================= src : lib/core/init.vbs ================= 
 Option Explicit
 
+' Judging by the declaration and description of the startsWith Java function, 
+' the "most straight forward way" to implement it in VBA would either be with Left:
+' Author: Blackhawk
+' Source: https://stackoverflow.com/a/20805609/1751166
+
+Public Function startsWith(str, prefix)
+    startsWith = Left(str, Len(prefix)) = prefix
+End Function
+
+Public Function endsWith(str, suffix)
+    endsWith = Right(str, Len(suffix)) = suffix
+End Function
+
+' ================= inline ================= 
+
 Dim debug: debug = (WScript.Arguments.Named("debug") = "true")
 if (debug) Then WScript.Echo "Debug is enabled"
+Dim vbspmDir
+Dim baseDir
+Dim cFS
+Redim IncludedScripts(-1)
+Dim arrUtil
+Dim buildDir
+Dim createBundle: createBundle = false
+Dim buildBundleFile: buildBundleFile = ""
+Dim oConsole
+Dim putil
+
+With CreateObject("WScript.Shell")
+baseDir=.CurrentDirectory
+End With
+
 ' ================= src : lib/core/Console/Console.vbs ================= 
 Class Console
 
@@ -61,6 +91,48 @@ Class Console
     end function
 
 End Class
+' ================= inline ================= 
+
+set oConsole = new Console
+PUblic Sub printf(str, args)
+'TODO: If use use %s, %d, %f format the values according to it.
+str = Replace(str, "%s", "%x")
+str = Replace(str, "%i", "%x")
+str = Replace(str, "%f", "%x")
+str = Replace(str, "%d", "%x")
+WScript.Echo oConsole.fmt(str, args)
+End Sub
+
+Public Sub debugf(str, args)
+if (debug) Then printf str, args
+End Sub
+
+Public Sub EchoX(str, args)
+If Not IsNull(args) Then
+If IsArray(args) Then
+'WScript.Echo str & " with args " & join(args, ",")
+WScript.Echo oConsole.fmt(str, args)
+Else
+'WScript.Echo str & " with arg " & args
+WScript.Echo oConsole.fmt(str, Array(args))
+End if
+Else
+WScript.Echo str
+End If
+End Sub
+
+Public Sub Echo(str)
+EchoX str, NULL
+End Sub
+
+Public Sub EchoDX(str, args)
+if (debug) Then EchoX str, args
+End Sub
+
+Public Sub EchoD(str)
+EchoDX str, NULL
+End Sub
+
 ' ================= src : lib/core/ArrayUtil/ArrayUtil.vbs ================= 
 Class ArrayUtil
 
@@ -100,6 +172,10 @@ Class ArrayUtil
     End Function
 
 End Class
+' ================= inline ================= 
+
+set arrUtil = new ArrayUtil
+
 ' ================= src : lib/core/FSO/FSO.vbs ================= 
 ' ==============================================================================================
 ' Implementation of several use cases of FileSystemObject into this class
@@ -238,81 +314,190 @@ Class FSO
 
 
 End Class
-' ================= src : lib/core/globals.vbs ================= 
-Dim vbspmDir
-Dim baseDir
-Dim cFS
-Redim IncludedScripts(-1)
-Dim arrUtil
-Dim buildDir
-Dim createBundle: createBundle = false
-Dim buildBundleFile: buildBundleFile = ""
-Dim oConsole 
+' ================= inline ================= 
 
 set cFS = new FSO
-set arrUtil = new ArrayUtil
-public Sub Echo(msg)
-  Wscript.Echo msg
-End Sub
 
-Function log(msg)
-  cFS.WriteFile "build.log", msg, false
+cFS.setDir(baseDir)
+
+buildDir = baseDir & "\build"
+If cFS.CreateFolder(buildDir) Then
+createBundle = true
+Else
+EchoX "Unable to create build directory at [%x]. Script will not be bundled. Please try again.", buildDir
+End If
+
+Public Function log(msg)
+cFS.WriteFile "build.log", msg, false
 End Function
 
 vbspmDir = cFS.GetFileDir(WScript.ScriptFullName)
 log "VBSPM Directory: " & vbspmDir
-With CreateObject("WScript.Shell")
-  baseDir=.CurrentDirectory
-End With
-log "Base path: " & baseDir
-cFS.setDir(baseDir)
-buildDir = baseDir & "\build"
-If cFS.CreateFolder(buildDir) Then
-  createBundle = true
-Else
-  WScript.Echo "Unable to create build directory at [" & buildDir & "]. Script will not be bundled. Please try again."
-End If
 
+
+' ================= src : lib/core/PathUtil/PathUtil.vbs ================= 
+Class PathUtil
+
+    Private Property Get DOT
+        DOT = "."
+    End Property
+    Private Property Get DOTDOT
+        DOTDOT = ".."
+    End Property
+    
+    Private oFSO
+    Private m_base
+    Private m_script
+    Private m_temp
+
+    Private Sub Class_Initialize()
+        set oFSO = CreateObject("Scripting.FileSystemObject")
+        m_script = Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,"\")-1)
+        m_base = m_script
+        m_temp = m_script
+    End Sub
+
+    Public Property Get ScriptPath
+        ScriptPath = m_script
+    End Property
+    Public Property Get BasePath
+        BasePath = m_base
+    End Property
+    Public Property Let BasePath(path)
+        Do While endsWith(path, "\")
+            path = Left(Path, Len(path)-1)
+        Loop
+        m_base = Resolve(path)
+        EchoDX "New Base Path: %x", m_base
+    End Property
+    Public Property Get TempBasePath
+        TempBasePath = m_temp
+    End Property
+    Public Property Let TempBasePath(path)
+        Do While endsWith(path, "\")
+            path = Left(Path, Len(path)-1)
+        Loop
+        m_temp = Resolve(path)
+        EchoDX "New Temp Base Path: %x", m_temp
+    End Property
+
+    Function Resolve(path)
+        Dim pathBase, lPath
+        EchoDX "path: %x", path
+        If path = DOT Or path = DOTDOT Then
+            path = path & "\"
+        End If
+        EchoDX "path: %x", path
+    
+        If oFSO.FolderExists(path) Then
+            EchoD "FolderExists"
+            Resolve = oFSO.GetFolder(path).path
+            Exit Function
+        End If
+
+        If oFSO.FileExists(path) Then
+            EchoD "FileExists"
+            Resolve = oFSO.GetFile(path).path
+            Exit Function
+        End If
+
+        pathBase = oFSO.BuildPath(m_base, path)
+        EchoDX "Adding base %x to path %x. New Path: %x", Array(m_base, path, pathBase)
+        
+        If endsWith(pathBase, "\") Then
+            If isObject(oFSO.GetFolder(pathBase)) Then
+                EchoD "EndsWith '\' -> FolderExists"
+                Resolve = oFSO.GetFolder(pathBase).Path
+                Exit Function
+            End If
+        Else
+
+            If oFSO.FolderExists(pathBase) Then
+                EchoD "FolderExists"
+                Resolve = oFSO.GetFolder(pathBase).path
+                Exit Function
+            End If
+
+            If oFSO.FileExists(pathBase) Then
+                EchoD "FileExists"
+                Resolve = oFSO.GetFile(pathBase).path
+                Exit Function
+            End If
+
+            lPath = oFSO.BuildPath(m_temp, path)
+            EchoDX "Adding Temp Base path %x to path %x. New Path: %x", Array(m_temp, path, lPath)
+            If oFSO.FileExists(lPath) Then
+                EchoD "Resolved with Temp Base"
+                Resolve = oFSO.GetFile(lPath).path
+                Exit Function
+            End If
+
+            lPath = oFSO.BuildPath(m_script, path)
+            EchoDX "Adding script path %x to path %x. New Path: %x", Array(m_script, path, lPath)
+            If oFSO.FileExists(lPath) Then
+                EchoD "Resolved with script base"
+                Resolve = oFSO.GetFile(lPath).path
+                Exit Function
+            End If
+        End If
+        
+        EchoD "Unable to Resolve"
+        Resolve = path
+    End Function ' Resolve
+
+
+    Private Sub Class_Terminate()
+        set oFSO = nothing
+    End Sub
+
+End Class ' PathUtil
+' ================= inline ================= 
+
+set putil = new PathUtil
+putil.BasePath = baseDir
+EchoX "Project location: %x", putil.BasePath
+
+' ================= src : lib/core/globals.vbs ================= 
 log "================================= Call ================================="
+
+log "Base path: " & baseDir
 
 Public Sub Import(pkg)
   log "Import(" + Pkg + ")"
   Include baseDir & "\node_modules\" + pkg + "\index.vbs"
 End Sub
-
-
-set oConsole = new Console
-PUblic Sub printf(str, args)
-    'TODO: If use use %s, %d, %f format the values according to it.
-    str = Replace(str, "%s", "%x")
-    str = Replace(str, "%i", "%x")
-    str = Replace(str, "%f", "%x")
-    str = Replace(str, "%d", "%x")
-    WScript.Echo oConsole.fmt(str, args)
-End Sub
-
-Public Sub debugf(str, args)
-    if (debug) Then printf str, args
-End Sub
-
 ' ================= src : lib/core/include-run.vbs ================= 
-
-Public Sub Include(file)
+' Dim iThread: iThread = 1
+' Public Function Thread(i)
+'     EchoX "Thread %x", i
+'     i = i + 1
+'     Thread = i
+' End Function
+Dim sThreadBase: sThreadBase = baseDir
+Public Function Include(file)
   log "Include(" + file + ")"
   if cFS.GetFileExtn(file) = "" Then
     log "File extension missing. Adding .vbs"
     file = file + ".vbs"
   end if
-  Dim path: path = cFS.GetFilePath(file)
+  Dim path
+  'path = cFS.GetFilePath(file)
+  putil.TempBasePath = sThreadBase
+  path = putil.Resolve(file)
   log "File full path: " & path
-  cFS.setDir(cFS.GetFileDir(file))
+  'cFS.setDir(cFS.GetFileDir(path))
+  sThreadBase = cFS.GetFileDir(path)
   
   If Not arrUtil.contains(IncludedScripts, path) Then
     Redim Preserve IncludedScripts(UBound(IncludedScripts)+1)
     IncludedScripts(UBound(IncludedScripts)) = path
-    Dim content: content = cFS.ReadFile(file)
+    Dim content: content = cFS.ReadFile(path)
     if content <> "" Then 
       'cFS.WriteFile "build\bundle.vbs", content, false
+      'EchoX "File: %x", file
+      'EchoX "Thread ---> %x", iThread
+      'content = "iThread = Thread(iThread)" & VBCRLF & content
+      'EchoX "Content: %x", content
       ExecuteGlobal content
     Else
       log "File content is empty. Not loaded."
@@ -320,7 +505,8 @@ Public Sub Include(file)
   Else
     log "File: " & path & " already loaded."
   End If
-End Sub
+  Include = Include
+End Function
 ' ================= src : lib/core/params.vbs ================= 
 log "Execution Started for file"
 

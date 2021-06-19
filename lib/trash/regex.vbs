@@ -38,14 +38,14 @@ End Function
 
 Debug.Print StartWithSubString("ab", "abc,d")
 
-' Judging by the declaration and description of the startsWith Java function, 
-' the "most straight forward way" to implement it in VBA would either be with Left:
-' Author: Blackhawk
-' Source: https://stackoverflow.com/a/20805609/1751166
+' ' Judging by the declaration and description of the startsWith Java function, 
+' ' the "most straight forward way" to implement it in VBA would either be with Left:
+' ' Author: Blackhawk
+' ' Source: https://stackoverflow.com/a/20805609/1751166
 
-Public Function startsWith(str As String, prefix As String) As Boolean
-    startsWith = Left(str, Len(prefix)) = prefix
-End Function
+' Public Function startsWith(str As String, prefix As String) As Boolean
+'     startsWith = Left(str, Len(prefix)) = prefix
+' End Function
 
 ' Or, if you want to have the offset parameter available, with Mid:
 ' Author: Blackhawk
