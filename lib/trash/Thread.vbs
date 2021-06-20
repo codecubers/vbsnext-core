@@ -1,5 +1,6 @@
+' Utility to spawm multiple threads in VBScript
 ' https://stackoverflow.com/questions/4610686/vbscript-threading
-
+'
 Class Thread
 ' Usage:
 '    Dim x: Set x = New Thread
