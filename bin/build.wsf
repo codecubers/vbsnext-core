@@ -7,6 +7,34 @@
         <script language="VBScript" src="lib/core/init.vbs" />
         <script language="VBScript" src="lib/core/Console/Console.vbs" />
         <script language="VBScript" src="lib/core/init-functions.vbs" />
+        <script language="VBScript" src="lib/core/DictUtil.vbs" />
+        <script language="VBScript" src="lib/core/ArrayUtil/ArrayUtil.vbs" />
+        <script language="VBScript"><![CDATA[
+                Dim arrUtil
+                set arrUtil = new ArrayUtil
+        ]]></script>
+        <script language="VBScript" src="lib/core/PathUtil/PathUtil.vbs" />
+        <script language="VBScript"><![CDATA[
+                Dim putil
+                set putil = new PathUtil  
+                putil.BasePath = baseDir
+                EchoX "Project location: %x", putil.BasePath          
+        ]]></script>
+        <script language="VBScript" src="lib/core/FSO/FSO.vbs" />
+        <script language="VBScript"><![CDATA[
+                Dim cFS
+                set cFS = new FSO
+
+                cFS.setDir(baseDir)
+
+                Public Function log(msg)
+                    cFS.WriteFile "build.log", msg, false
+                End Function
+
+                'vbspmDir = cFS.GetFileDir(WScript.ScriptFullName)
+                log "VBSPM Directory: " & vbspmDir
+
+        ]]></script>
         <script language="VBScript" src="lib/core/include-build.vbs" />
     </job>
 </package>

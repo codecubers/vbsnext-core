@@ -6,6 +6,14 @@
 ' ================= src : lib/core/init.vbs ================= 
 Option Explicit
 
+Dim debug: debug = (WScript.Arguments.Named("debug") = "true")
+if (debug) Then WScript.Echo "Debug is enabled"
+Dim VBSPM_TEST_INDEX: VBSPM_TEST_INDEX = 1
+Dim vbspmDir: vbspmDir=Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,"\"))
+Dim baseDir
+With CreateObject("WScript.Shell")
+    baseDir=.CurrentDirectory
+End With
 ' Judging by the declaration and description of the startsWith Java function, 
 ' the "most straight forward way" to implement it in VBA would either be with Left:
 ' Author: Blackhawk
@@ -19,23 +27,46 @@ Public Function endsWith(str, suffix)
     endsWith = Right(str, Len(suffix)) = suffix
 End Function
 
+Public Function contains(str, char)
+    contains = (Instr(1, str, char) > 0)
+End Function
+
+Public Function argsArray()
+    Dim i
+    ReDim arr(WScript.Arguments.Count-1)
+    For i = 0 To WScript.Arguments.Count-1
+        arr(i) = """"+WScript.Arguments(i)+""""
+    Next
+    argsArray = arr
+End Function
+
+Public Function argsDict()
+    Dim i, param, dict
+    set dict = CreateObject("Scripting.Dictionary")
+    dict.CompareMode = vbTextCompare
+    ReDim arr(WScript.Arguments.Count-1)
+    For i = 1 To WScript.Arguments.Count-1
+        param = WScript.Arguments(i)
+        If startsWith(param, "/") And contains(param, ":") Then
+            param = mid(param, 2)
+            WScript.Echo "param to be split: " & param
+            dict.Add split(param, ":")(0), split(param, ":")(1)
+        Else
+            dict.Add i, param
+        End If
+    Next
+    set argsDict = dict
+End Function
+
 ' ================= inline ================= 
 
-Dim debug: debug = (WScript.Arguments.Named("debug") = "true")
-if (debug) Then WScript.Echo "Debug is enabled"
-Dim vbspmDir
-Dim baseDir
-Dim cFS
+
 Redim IncludedScripts(-1)
-Dim arrUtil
 Dim buildDir
 Dim createBundle: createBundle = false
 Dim buildBundleFile: buildBundleFile = ""
-Dim putil
 
-With CreateObject("WScript.Shell")
-baseDir=.CurrentDirectory
-End With
+
 
 ' ================= src : lib/core/Console/Console.vbs ================= 
 Class Console
@@ -131,6 +162,73 @@ End Sub
 Public Sub EchoD(str) 
     EchoDX str, NULL
 End Sub
+' ================= src : lib/core/DictUtil.vbs ================= 
+Class DictUtil
+    
+    ' Author: Dale Fugier <https://developer.rhino3d.com/authors/dale_fugier>
+    ' Source: https://developer.rhino3d.com/guides/rhinoscript/vbscript-dictionaries/
+    ' Description:
+    '   Sorts a dictionary by either key or item
+    ' Parameters:
+    '   objDict - the dictionary to sort
+    '   intSort - the field to sort (1=key, 2=item)
+    ' Returns:
+    '   A dictionary sorted by intSort
+    ''' <summary>Sorts a dictionary by either key or item</summary>
+	''' <param name="objDict">The dictionary to sort</param>
+	''' <param name="intSort">The field to sort (1=key, 2=item)</param>
+    Function SortDictionary(objDict, intSort)
+
+        ' declare constants
+        Const dictKey  = 1
+        Const dictItem = 2
+
+        ' declare our variables
+        Dim strDict()
+        Dim objKey
+        Dim strKey,strItem
+        Dim X,Y,Z
+
+        ' get the dictionary count
+        Z = objDict.Count
+
+        ' we need more than one item to warrant sorting
+        If Z > 1 Then
+            ' create an array to store dictionary information
+            ReDim strDict(Z,2)
+            X = 0
+            ' populate the string array
+            For Each objKey In objDict
+                strDict(X,dictKey)  = CStr(objKey)
+                strDict(X,dictItem) = CStr(objDict(objKey))
+                X = X + 1
+            Next
+
+            ' perform a a shell sort of the string array
+            For X = 0 To (Z - 2)
+            For Y = X To (Z - 1)
+                If StrComp(strDict(X,intSort),strDict(Y,intSort),vbTextCompare) > 0 Then
+                    strKey  = strDict(X,dictKey)
+                    strItem = strDict(X,dictItem)
+                    strDict(X,dictKey)  = strDict(Y,dictKey)
+                    strDict(X,dictItem) = strDict(Y,dictItem)
+                    strDict(Y,dictKey)  = strKey
+                    strDict(Y,dictItem) = strItem
+                End If
+            Next
+            Next
+
+            ' erase the contents of the dictionary object
+            objDict.RemoveAll
+
+            ' repopulate the dictionary with the sorted information
+            For X = 0 To (Z - 1)
+            objDict.Add strDict(X,dictKey), strDict(X,dictItem)
+            Next
+
+        End If
+    End Function
+End Class
 ' ================= src : lib/core/ArrayUtil/ArrayUtil.vbs ================= 
 Class ArrayUtil
 	
@@ -174,6 +272,7 @@ Class ArrayUtil
 End Class
 ' ================= inline ================= 
 
+Dim arrUtil
 set arrUtil = new ArrayUtil
 
 ' ================= src : lib/core/PathUtil/PathUtil.vbs ================= 
@@ -234,7 +333,7 @@ Class PathUtil
 	End Property
 	
 	Function Resolve(path)
-		Dim pathBase, lPath
+		Dim pathBase, lPath, final
 		EchoDX "path: %x", path
 		If path = DOT Or path = DOTDOT Then
 			path = path & "\"
@@ -282,8 +381,15 @@ Class PathUtil
 				lPath = oFSO.BuildPath(m_temp(i), path)
 				EchoDX "Adding Temp Base path (%x) %x to path %x. New Path: %x", Array(i, m_temp(i), path, lPath)
 				If oFSO.FileExists(lPath) Then
-					EchoD "Resolved with Temp Base"
-					Resolve = oFSO.GetFile(lPath).path
+					final = oFSO.GetFile(lPath).path
+					EchoDX "File Resolved with Temp Base %x", final
+					Resolve = final
+					Exit Function
+				End If
+				If oFSO.FolderExists(lPath) Then
+					final = oFSO.GetFolder(lPath)
+					EchoDX "Folder Resolved with Temp Base %x", final
+					Resolve = final
 					Exit Function
 				End If
 				i = i - 1
@@ -292,8 +398,15 @@ Class PathUtil
 			lPath = oFSO.BuildPath(m_script, path)
 			EchoDX "Adding script path %x to path %x. New Path: %x", Array(m_script, path, lPath)
 			If oFSO.FileExists(lPath) Then
-				EchoD "Resolved with script base"
-				Resolve = oFSO.GetFile(lPath).path
+				final = oFSO.GetFile(lPath).path
+				EchoDX "File Resolved with Temp Base %x", final
+				Resolve = final
+				Exit Function
+			End If
+			If oFSO.FolderExists(lPath) Then
+				final = oFSO.GetFolder(lPath)
+				EchoDX "Folder Resolved with Temp Base %x", final
+				Resolve = final
 				Exit Function
 			End If
 		End If
@@ -309,6 +422,7 @@ Class PathUtil
 End Class ' PathUtil
 ' ================= inline ================= 
 
+Dim putil
 set putil = new PathUtil
 putil.BasePath = baseDir
 EchoX "Project location: %x", putil.BasePath
@@ -454,6 +568,7 @@ Class FSO
 End Class
 ' ================= inline ================= 
 
+Dim cFS
 set cFS = new FSO
 
 cFS.setDir(baseDir)
@@ -469,7 +584,7 @@ Public Function log(msg)
 cFS.WriteFile "build.log", msg, false
 End Function
 
-vbspmDir = cFS.GetFileDir(WScript.ScriptFullName)
+'vbspmDir = cFS.GetFileDir(WScript.ScriptFullName)
 log "VBSPM Directory: " & vbspmDir
 
 
@@ -560,9 +675,9 @@ Sub BundleScript(file, overwrite)
     if createBundle Then
         cFS.WriteFile buildBundleFile, content, isOverwrite
     End If
-    End Sub
+End Sub
 
-    Sub BundleScriptStr(content, overwrite)
+Sub BundleScriptStr(content, overwrite)
     Dim isOverwrite: isOverwrite = (overwrite = true)
     if createBundle Then
         cFS.WriteFile buildBundleFile, content, isOverwrite
@@ -575,7 +690,9 @@ End Sub
 BundleScript vbspmDir & "\vbspm-build.vbs", true
 
 '===========================
+On Error Resume Next
 Include file
+On Error Goto 0
 '===========================
 
 ' Wscript.Echo arrUtil.toString(IncludedScripts)

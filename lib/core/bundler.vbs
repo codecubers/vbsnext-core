@@ -4,9 +4,9 @@ Sub BundleScript(file, overwrite)
     if createBundle Then
         cFS.WriteFile buildBundleFile, content, isOverwrite
     End If
-    End Sub
+End Sub
 
-    Sub BundleScriptStr(content, overwrite)
+Sub BundleScriptStr(content, overwrite)
     Dim isOverwrite: isOverwrite = (overwrite = true)
     if createBundle Then
         cFS.WriteFile buildBundleFile, content, isOverwrite
@@ -19,7 +19,9 @@ End Sub
 BundleScript vbspmDir & "\vbspm-build.vbs", true
 
 '===========================
+On Error Resume Next
 Include file
+On Error Goto 0
 '===========================
 
 ' Wscript.Echo arrUtil.toString(IncludedScripts)

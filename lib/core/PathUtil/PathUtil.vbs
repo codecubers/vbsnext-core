@@ -55,7 +55,7 @@ Class PathUtil
 	End Property
 	
 	Function Resolve(path)
-		Dim pathBase, lPath
+		Dim pathBase, lPath, final
 		EchoDX "path: %x", path
 		If path = DOT Or path = DOTDOT Then
 			path = path & "\"
@@ -103,8 +103,15 @@ Class PathUtil
 				lPath = oFSO.BuildPath(m_temp(i), path)
 				EchoDX "Adding Temp Base path (%x) %x to path %x. New Path: %x", Array(i, m_temp(i), path, lPath)
 				If oFSO.FileExists(lPath) Then
-					EchoD "Resolved with Temp Base"
-					Resolve = oFSO.GetFile(lPath).path
+					final = oFSO.GetFile(lPath).path
+					EchoDX "File Resolved with Temp Base %x", final
+					Resolve = final
+					Exit Function
+				End If
+				If oFSO.FolderExists(lPath) Then
+					final = oFSO.GetFolder(lPath)
+					EchoDX "Folder Resolved with Temp Base %x", final
+					Resolve = final
 					Exit Function
 				End If
 				i = i - 1
@@ -113,8 +120,15 @@ Class PathUtil
 			lPath = oFSO.BuildPath(m_script, path)
 			EchoDX "Adding script path %x to path %x. New Path: %x", Array(m_script, path, lPath)
 			If oFSO.FileExists(lPath) Then
-				EchoD "Resolved with script base"
-				Resolve = oFSO.GetFile(lPath).path
+				final = oFSO.GetFile(lPath).path
+				EchoDX "File Resolved with Temp Base %x", final
+				Resolve = final
+				Exit Function
+			End If
+			If oFSO.FolderExists(lPath) Then
+				final = oFSO.GetFolder(lPath)
+				EchoDX "Folder Resolved with Temp Base %x", final
+				Resolve = final
 				Exit Function
 			End If
 		End If

@@ -6,36 +6,32 @@
 
         <script language="VBScript" src="lib/core/init.vbs" />
         <script language="VBScript"><![CDATA[
-                Dim debug: debug = (WScript.Arguments.Named("debug") = "true")
-                if (debug) Then WScript.Echo "Debug is enabled"
-                Dim vbspmDir
-                Dim baseDir
-                Dim cFS
+                
                 Redim IncludedScripts(-1)
-                Dim arrUtil
                 Dim buildDir
                 Dim createBundle: createBundle = false
                 Dim buildBundleFile: buildBundleFile = ""
-                Dim putil 
 
-                With CreateObject("WScript.Shell")
-                baseDir=.CurrentDirectory
-                End With
+                
         ]]></script>
         <script language="VBScript" src="lib/core/Console/Console.vbs" />
         <script language="VBScript" src="lib/core/init-functions.vbs" />
+        <script language="VBScript" src="lib/core/DictUtil.vbs" />
         <script language="VBScript" src="lib/core/ArrayUtil/ArrayUtil.vbs" />
         <script language="VBScript"><![CDATA[
+                Dim arrUtil
                 set arrUtil = new ArrayUtil
         ]]></script>
         <script language="VBScript" src="lib/core/PathUtil/PathUtil.vbs" />
         <script language="VBScript"><![CDATA[
+                Dim putil 
                 set putil = new PathUtil  
                 putil.BasePath = baseDir
                 EchoX "Project location: %x", putil.BasePath          
         ]]></script>
         <script language="VBScript" src="lib/core/FSO/FSO.vbs" />
         <script language="VBScript"><![CDATA[
+                Dim cFS
                 set cFS = new FSO
 
                 cFS.setDir(baseDir)
@@ -51,7 +47,7 @@
                     cFS.WriteFile "build.log", msg, false
                 End Function
 
-                vbspmDir = cFS.GetFileDir(WScript.ScriptFullName)
+                'vbspmDir = cFS.GetFileDir(WScript.ScriptFullName)
                 log "VBSPM Directory: " & vbspmDir
 
         ]]></script>

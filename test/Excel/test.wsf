@@ -1,9 +1,0 @@
-<package>
-    <job id="Test0">
-        <script language="VBScript" src="../../lib/core/init.vbs" />
-        <script language="VBScript" src="../../lib/core/Console/Console.vbs" />
-        <script language="VBScript" src="../../lib/core/init-functions.vbs" />
-        <script language="VBScript" src="../../dist/Excel.vbs" />
-        <script language="VBScript" src="test.vbs" />
-    </job>
-</package>
