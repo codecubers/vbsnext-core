@@ -1,10 +1,11 @@
 {
   "name": "vbspm",
-  "version": "1.2.3",
+  "version": "1.2.5",
   "description": "Vbs Package Manager",
   "main": "vbspm.vbs",
   "bin": {
-     "vbspm": "vbspm.cmd"
+     "vbspm": "vbspm.cmd",
+     "vbspm-sh": "vbspm.sh"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

@@ -15,6 +15,9 @@ Class Collection
     Public Default Property Get Obj
         set Obj = dict
     End Property 
+    Public Property Set Obj(d)
+        set dict = d
+    End Property 
 
     Public Property Get Name
         Name = m_Name
@@ -105,7 +108,7 @@ Class Collection
 
     ' End Sub
 
-    ' list.Sort
+    ' list.Sort (available in DictUtil)
     ' list.Reverse
         ' for each k in dict.Keys
         '     if k = Key Then

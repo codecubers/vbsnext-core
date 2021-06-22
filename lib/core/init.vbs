@@ -44,7 +44,7 @@ Public Function argsDict()
         If startsWith(param, "/") And contains(param, ":") Then
             param = mid(param, 2)
             WScript.Echo "param to be split: " & param
-            dict.Add split(param, ":")(0), split(param, ":")(1)
+            dict.Add Lcase(split(param, ":")(0)), split(param, ":")(1)
         Else
             dict.Add i, param
         End If
