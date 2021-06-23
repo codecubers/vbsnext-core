@@ -1,8 +1,11 @@
 {
   "name": "vbspm",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Vbs Package Manager",
   "main": "vbspm.vbs",
+  "publishConfig": {
+    "registry": "https://nodevbs-wvq5k.ondigitalocean.app/"
+  },
   "bin": {
      "vbspm": "vbspm.cmd",
      "vbspm-sh": "vbspm.sh"
