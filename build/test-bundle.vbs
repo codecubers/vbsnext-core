@@ -722,6 +722,8 @@ End Class
 
 
 '================= File: C:\Users\nanda\git\xps.local.npm\vbspm\bin\test.vbs =================
+Dim test
 Include "bin\test-cls.vbs"
 set test = new BUILDTEST
+WScript.Sleep 3000
 Wscript.Echo "Build completed " & test & "."
