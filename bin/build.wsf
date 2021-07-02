@@ -36,6 +36,7 @@
                 log "VBSPM Directory: " & vbspmDir
 
         ]]></script>
+        <script language="VBScript" src="lib/core/extends.vbs" />
         <script language="VBScript" src="lib/core/include-build.vbs" />
     </job>
 </package>

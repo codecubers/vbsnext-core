@@ -51,6 +51,7 @@
                 log "VBSPM Directory: " & vbspmDir
 
         ]]></script>
+        <script language="VBScript" src="lib/core/extends.vbs" />
         <script language="VBScript" src="lib/core/globals.vbs" />
         <script language="VBScript" src="lib/core/include-run.vbs" />
         <script language="VBScript" src="lib/core/params.vbs" />

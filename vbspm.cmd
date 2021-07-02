@@ -1,1 +1,1 @@
-cscript //nologo %dp0%\..\vbspm\vbspm.vbs %*
+call cscript //nologo %dp0%\..\vbspm\vbspm.vbs %*
