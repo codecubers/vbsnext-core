@@ -1,0 +1,76 @@
+Declare Function EnumChildWindows Lib "user32" (ByVal hWndParent _
+   As Long, ByVal lpEnumFunc As Long, ByVal lParam As Long) As Long
+
+Declare Function EnumThreadWindows Lib "user32" (ByVal dwThreadId _
+   As Long, ByVal lpfn As Long, ByVal lParam As Long) As Long
+
+Declare Function GetClassName Lib "user32" Alias "GetClassNameA" _
+   (ByVal hWnd As Long, ByVal lpClassName As String, _
+   ByVal nMaxCount As Long) As Long
+
+Declare Function GetWindowText Lib "user32" Alias "GetWindowTextA" _
+   (ByVal hWnd As Long, ByVal lpString As String, _
+   ByVal cch As Long) As Long
+
+Public Declare Function GetCurrentThreadId Lib "kernel32" () As Long
+
+Public Declare Function CallWindowProc Lib "user32" Alias _
+"CallWindowProcA" _
+    (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal msg As Long, _
+    ByVal wParam As Long, ByVal lParam As Long) As Long
+
+Public Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" _
+    (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) _
+    As Long
+    
+Public Declare Function SendMessage Lib "user32" Alias "SendMessageA" _
+    (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As _
+    Long, ByVal lParam As Long) As Long
+
+Public Declare Function WindowFromPointXY Lib "user32" _
+               Alias "WindowFromPoint" (ByVal xPoint As Long, _
+               ByVal yPoint As Long) As Long
+               
+Private Declare Function SystemParametersInfo Lib "user32" _
+        Alias "SystemParametersInfoA" _
+        (ByVal uAction As Long, _
+        ByVal uParam As Long, _
+        lpvParam As Any, _
+        ByVal fuWinIni As Long) As Long
+
+Public Declare Function PostMessage Lib "user32" Alias "PostMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Public Declare Function WindowFromPoint Lib "user32" (pt As POINTAPI) As Long
+Public Declare Function GetWindowInfo Lib "user32" (ByVal hWnd As Long, ByRef pwi As WINDOWINFO) As Boolean
+
+Public Declare Function LoadLibrary Lib "kernel32" Alias "LoadLibraryA" (ByVal lpLibFileName As String) As Long
+Public Declare Function FreeLibrary Lib "kernel32" Alias "FreeLibraryA" (ByVal hLibrary As Long) As Boolean
+
+
+
+        "RegQueryValueExA" (ByVal hKey As Long, ByVal lpValueName As _
+        String, ByVal lpReserved As Long, lpType As Long, lpData As _
+        Long, lpcbData As Long) As Long
+   
+   Declare Function RegQueryValueExNULL Lib "advapi32.dll" Alias _
+        "RegQueryValueExA" (ByVal hKey As Long, ByVal lpValueName As _
+        String, ByVal lpReserved As Long, lpType As Long, ByVal lpData _
+        As Long, lpcbData As Long) As Long
+   
+   Declare Function RegSetValueExString Lib "advapi32.dll" Alias _
+        "RegSetValueExA" (ByVal hKey As Long, ByVal lpValueName As String, _
+        ByVal Reserved As Long, ByVal dwType As Long, ByVal lpValue As _
+        String, ByVal cbData As Long) As Long
+    
+   Declare Function RegSetValueExLong Lib "advapi32.dll" Alias _
+       "RegSetValueExA" (ByVal hKey As Long, ByVal lpValueName As String, _
+        ByVal Reserved As Long, ByVal dwType As Long, lpValue As Long, _
+       ByVal cbData As Long) As Long
+
+Dim nKeys As Long, Delta As Long, XPos As Long, YPos As Long
+Dim OriginalWindowProc As Long
+Dim pthWnd As Long
+Dim lLineNumbers As Long
+Dim MainWindowHwnd As Long  ' Main IDE window handle
+Dim bHook As Boolean
+Dim sLib As String
+Dim hLib As Long

@@ -6,3 +6,4 @@ build
 lib
 test
 build.log
+class-resolver.js

@@ -619,7 +619,7 @@ if cFS.GetFileExtn(file) = "" Then
 end if
 
 log "Main Script: " & file
-buildBundleFile = buildDir & "\" & cFS.GetBaseName(file) &  "-bundle.vbs"
+buildBundleFile = buildDir & "\" & cFS.GetBaseName(file) &  "-bundle-unresolved.vbs"
 log "buildBundleFile: " & buildBundleFile
 
 Sub BundleScript(file, overwrite)

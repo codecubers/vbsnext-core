@@ -17,7 +17,7 @@ parseWSF('bin\\build.wsf').then((jobs)=>{
     vbsCombined = vbsCombined.htmlEscape();
     // console.log('vbs combined:')
     // console.log(vbsCombined);
-    fs.writeFileSync('vbspm-build-bulk.vbs', vbsCombined);
+    fs.writeFileSync('vbspm-build-unresolved.vbs', vbsCombined);
 }).catch((error)=>{
     console.error(error)
 })
@@ -28,7 +28,7 @@ parseWSF('bin\\run.wsf').then((jobs)=>{
     vbsCombined = vbsCombined.htmlEscape();
     // console.log('vbs combined:')
     // console.log(vbsCombined);
-    fs.writeFileSync('vbspm-bulk.vbs', vbsCombined);
+    fs.writeFileSync('vbspm-unresolved.vbs', vbsCombined);
 }).catch((error)=>{
     console.error(error)
 })
