@@ -1,21 +1,13 @@
-<package id="vbspm">
-    <job id="vbspm-build">
+<package id="vbsnext">
+    <job id="vbsnext-build">
         <runtime>
             <named name="file" helpstring="File to be executed" required="true" type="string"/>
         </runtime>
 
         <script language="VBScript" src="lib/core/init.vbs" />
-        <script language="VBScript"><![CDATA[
-                
-                Redim IncludedScripts(-1)
-                Dim buildDir
-                Dim createBundle: createBundle = false
-                Dim buildBundleFile: buildBundleFile = ""
-
-                
-        ]]></script>
         <script language="VBScript" src="lib/core/Console/Console.vbs" />
         <script language="VBScript" src="lib/core/init-functions.vbs" />
+        <script language="VBScript" src="lib/core/Collection/Collection.vbs" />
         <script language="VBScript" src="lib/core/DictUtil.vbs" />
         <script language="VBScript" src="lib/core/ArrayUtil/ArrayUtil.vbs" />
         <script language="VBScript"><![CDATA[
@@ -24,7 +16,7 @@
         ]]></script>
         <script language="VBScript" src="lib/core/PathUtil/PathUtil.vbs" />
         <script language="VBScript"><![CDATA[
-                Dim putil 
+                Dim putil
                 set putil = new PathUtil  
                 putil.BasePath = baseDir
                 EchoX "Project location: %x", putil.BasePath          
@@ -36,26 +28,15 @@
 
                 cFS.setDir(baseDir)
 
-                buildDir = baseDir & "\build"
-                If cFS.CreateFolder(buildDir) Then
-                    createBundle = true
-                Else
-                    EchoX "Unable to create build directory at [%x]. Script will not be bundled. Please try again.", buildDir
-                End If
-
                 Public Function log(msg)
                     cFS.WriteFile "build.log", msg, false
                 End Function
 
-                'vbspmDir = cFS.GetFileDir(WScript.ScriptFullName)
-                log "VBSPM Directory: " & vbspmDir
+                'vbsnextDir = cFS.GetFileDir(WScript.ScriptFullName)
+                log "VBSNext Directory: " & vbsnextDir
 
         ]]></script>
         <script language="VBScript" src="lib/core/extends.vbs" />
-        <script language="VBScript" src="lib/core/globals.vbs" />
-        <script language="VBScript" src="lib/core/include-run.vbs" />
-        <script language="VBScript" src="lib/core/params.vbs" />
-        <script language="VBScript" src="lib/core/bundler.vbs" />
-        
+        <script language="VBScript" src="lib/core/include-build.vbs" />
     </job>
 </package>

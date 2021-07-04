@@ -11,24 +11,24 @@ String.prototype.htmlEscape = function htmlEscape(str) {
         .replace(CHAR_SINGLE, '\'');
 };
 
-parseWSF('bin\\build.wsf').then((jobs)=>{
+parseWSF('bin\\builder.wsf').then((jobs)=>{
     // console.log(JSON.stringify(jobs, null, 2));
     let vbsCombined = extractVBS(jobs);
     vbsCombined = vbsCombined.htmlEscape();
     // console.log('vbs combined:')
     // console.log(vbsCombined);
-    fs.writeFileSync('vbspm-build-unresolved.vbs', vbsCombined);
+    fs.writeFileSync('bin\\vbsnext-build-unresolved.vbs', vbsCombined);
 }).catch((error)=>{
     console.error(error)
 })
 
-parseWSF('bin\\run.wsf').then((jobs)=>{
+parseWSF('bin\\runner.wsf').then((jobs)=>{
     // console.log(JSON.stringify(jobs, null, 2));
     let vbsCombined = extractVBS(jobs);
     vbsCombined = vbsCombined.htmlEscape();
     // console.log('vbs combined:')
     // console.log(vbsCombined);
-    fs.writeFileSync('vbspm-unresolved.vbs', vbsCombined);
+    fs.writeFileSync('bin\\vbsnext-unresolved.vbs', vbsCombined);
 }).catch((error)=>{
     console.error(error)
 })

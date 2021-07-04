@@ -1,32 +1,34 @@
 {
-  "name": "vbspm",
-  "version": "1.3.2",
-  "description": "Vbs Package Manager",
-  "main": "vbspm.vbs",
-  "publishConfig": {
-    "registry": "https://nodevbs-wvq5k.ondigitalocean.app/"
-  },
+  "name": "@vbsnext/vbsnext-core",
+  "version": "1.3.3",
+  "description": "VbsNext project core scripts",
+  "main": "vbsnext.cmd",
   "bin": {
-    "vbspm": "vbspm.cmd",
-    "vbspm-sh": "vbspm.sh"
+    "vbsnext": "vbsnext.cmd",
+    "vbsnext-sh": "vbsnext.sh"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node bin\\wsfParser.js && node class-resolver.js && cscript //nologo vbspm.vbs /file:\"bin\\test.vbs\"",
+    "test": "test.cmd",
+    "build": "builder.cmd",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
+    "vbs",
+    "vbscript",
     "vbs package manager",
+    "vbsnext core",
     "vbs on npm",
-    "visual basic script",
-    "wsf"
+    "vbs next gen"
   ],
-  "author": "Pravee Kumar Nandagiri (@pravynandas) <pravynandas@gmail.com>",
+  "author": {
+    "name": "Pravee Kumar Nandagiri",
+    "email": "pravynandas@gmail.com"
+  },
   "license": "ISC",
   "devDependencies": {
-    "wsf2json": "^1.0.4"
+    "wsf2json": "^1.0.5"
   },
   "dependencies": {
-    "vbs-method-parser": "^1.0.3"
+    "@vbsnext/vbs-class-extends": "^1.0.7"
   }
 }

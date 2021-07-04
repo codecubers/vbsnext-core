@@ -4,8 +4,8 @@ Option Explicit
 
 Dim debug: debug = (WScript.Arguments.Named("debug") = "true")
 if (debug) Then WScript.Echo "Debug is enabled"
-Dim VBSPM_TEST_INDEX: VBSPM_TEST_INDEX = 1
-Dim vbspmDir: vbspmDir=Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,"\"))
+Dim VBSNEXT_TEST_INDEX: VBSNEXT_TEST_INDEX = 1
+Dim vbsnextDir: vbsnextDir=Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,"\"))
 Dim baseDir
 With CreateObject("WScript.Shell")
     baseDir=.CurrentDirectory
@@ -48,7 +48,12 @@ Public Function argsDict()
         End If
     Next
     set argsDict = dict
-End Function	
+End Function
+
+Redim IncludedScripts(-1)
+Dim buildDir
+Dim createBundle: createBundle = false
+Dim buildBundleFile: buildBundleFile = ""	
 
 Class Console
 
@@ -129,101 +134,7 @@ Public Sub EchoD(str)
     EchoDX str, NULL
 End Sub	
 
-Class Collection
-
-    Private dict
-    Private oThis
-    Private m_Name
-
-    Private Sub Class_Initialize()
-        set dict = CreateObject("Scripting.Dictionary")
-        set oThis = Me
-        m_Name = "Undefined"
-    End Sub
-
-    Public Default Property Get Obj
-        set Obj = dict
-    End Property 
-    Public Property Set Obj(d)
-        set dict = d
-    End Property
-
-    Public Property Get Name
-        Name = m_Name
-    End Property
-    Public Property Let Name(Value)
-        m_Name = Value
-    End Property
-
-    Public Sub Add(Key, Value)
-        dict.Add key, value
-    End Sub
-
-    Public Sub Remove(Key)
-        If KeyExists(Key) Then
-            dict.Remove(Key)
-        Else
-            RaiseErr "Key [" & Key & "] does not exists in collection."
-        End If
-    End Sub
-
-    Public Sub RemoveAll()
-        dict.RemoveAll()
-    End Sub
-
-    Public Property Get Count
-        Count = dict.Count
-    End Property
-
-    Public Function GetItem(Key)
-        If KeyExists(Key) Then
-            GetItem = dict.Item(Key)
-        Else
-
-            RaiseErr "Key [" & Key & "] does not exists in collection."
-        End If
-    End Function
-
-    Public Function GetItemAtIndex(Index)
-
-        GetItemAtIndex = dict.Item(Index)
-    End Function
-
-    Public Function IndexOf(Key)
-        IndexOf = dict.IndexOf(Key, 0)
-    End Function
-
-    Public Function KeyExists(Key)
-        KeyExists = dict.Exists(Key)
-    End Function
-
-    Public Function toCSV
-        toCSV = join(toArray(), ", ")
-    End Function
-
-    Public Function toArray
-        toArray = dict.Items
-    End Function
-
-    Public Function isEmpty
-        isEmpty = (dict.Count = 0)        
-    End Function
-
-    Private Sub RaiseErr(desc)
-        Err.Clear
-        Err.Raise 1000, "Collection Class Error", desc
-    End Sub
-
-    Private Sub Class_Terminate()
-        set dict = Nothing
-        set oThis = Nothing
-    End Sub
-
-End Class
-
-
-
-	Class DictUtil
+Class DictUtil
 
     Function SortDictionary(objDict, intSort)
 
@@ -603,15 +514,22 @@ set cFS = new FSO
 
 cFS.setDir(baseDir)
 
+buildDir = baseDir & "\build"
+If cFS.CreateFolder(buildDir) Then
+createBundle = true
+Else
+EchoX "Unable to create build directory at [%x]. Script will not be bundled. Please try again.", buildDir
+End If
+
 Public Function log(msg)
 cFS.WriteFile "build.log", msg, false
 End Function
 
-log "VBSPM Directory: " & vbspmDir	
+log "VBSNext Directory: " & vbsnextDir	
 
 Class ClassA
     public default sub CallMe
-        WScript.Echo "I'm in ClassA"
+        WScript.Echo "Class-extending resolved successfully."
     End Sub
 End Class
 
@@ -636,24 +554,99 @@ Dim ccb
 set ccb = new ClassB
 ccb.CallMe
 
-Public Sub Include(file)
+log "================================= Call ================================="
 
+log "Base path: " & baseDir
+
+Public Sub Import(pkg)
+  log "Import(" + Pkg + ")"
+  Include baseDir & "\node_modules\" + pkg + "\index.vbs"
 End Sub
-Public Sub Import(file)
 
+Dim sThreadBase: sThreadBase = baseDir
+Public Function Include(file)
+  log "Include(" + file + ")"
+  if cFS.GetFileExtn(file) = "" Then
+    log "File extension missing. Adding .vbs"
+    file = file + ".vbs"
+  end if
+  Dim path
+
+  putil.TempBasePath = sThreadBase
+  path = putil.Resolve(file)
+  log "File full path: " & path
+
+  sThreadBase = cFS.GetFileDir(path)
+
+  If Not arrUtil.contains(IncludedScripts, path) Then
+    Redim Preserve IncludedScripts(UBound(IncludedScripts)+1)
+    IncludedScripts(UBound(IncludedScripts)) = path
+    Dim content: content = cFS.ReadFile(path)
+    if content <> "" Then
+
+      ExecuteGlobal content
+    Else
+      log "File content is empty. Not loaded."
+    End If
+  Else
+    log "File: " & path & " already loaded."
+  End If
+  Include = Include
+End Function
+
+log "Execution Started for file"
+
+Dim file
+file = WScript.Arguments.Named("file")
+If file = "" Then
+    log "Script file not provided as a named argument [/file:]"
+    if Wscript.Arguments.count > 0 then
+      file = Wscript.Arguments(0) 
+      if file = "" Then
+        log "No file argument provided."
+        Wscript.Quit
+      End If
+    else 
+      file = "index.vbs"
+    end if
+End If
+
+file = baseDir & "\" & file
+
+if cFS.GetFileExtn(file) = "" Then
+  log "File extension missing. Adding .vbs"
+  file = file + ".vbs"
+end if
+
+log "Main Script: " & file
+buildBundleFile = buildDir & "\" & cFS.GetBaseName(file) &  "-bundle-unresolved.vbs"
+log "buildBundleFile: " & buildBundleFile
+
+Sub BundleScript(file, overwrite)
+    Dim isOverwrite: isOverwrite = (overwrite = true)
+    Dim content: content = cFS.ReadFile(file)
+    if createBundle Then
+        cFS.WriteFile buildBundleFile, content, isOverwrite
+    End If
 End Sub
 
+Sub BundleScriptStr(content, overwrite)
+    Dim isOverwrite: isOverwrite = (overwrite = true)
+    if createBundle Then
+        cFS.WriteFile buildBundleFile, content, isOverwrite
+    End If
+End Sub
 
-'================= File: C:\Users\nanda\Github\vbs-revive\vbspm\bin\test-cls.vbs =================
-Class BUILDTEST
-    Public default Property Get Status
-            Status = "Successfully.."
-    End Property
-End Class
+BundleScript vbsnextDir & "\vbsnext-build.vbs", true
 
+On Error Resume Next
+Include file
+On Error Goto 0
 
-'================= File: C:\Users\nanda\Github\vbs-revive\vbspm\bin\test.vbs =================
-Dim test
-Include "bin\test-cls.vbs"
-set test = new BUILDTEST
-Wscript.Echo "Build completed " & test & "."
+Dim i, core
+for i = UBound(IncludedScripts) to 0 step -1
+    core = cFS.ReadFile(IncludedScripts(i))
+    core = Replace(core, "Option Explicit", "")
+    core = vbCrLf & vbCrLf & "'================= File: " & IncludedScripts(i) & " =================" & vbCrLf & core
+    BundleScriptStr core, false
+next

@@ -8,7 +8,7 @@ console.log('filename finally...', file)
 let outFile = file.replace('-unresolved.vbs', '.vbs');
 
 const fs = require('fs');
-const extendVbs = require('vbs-method-parser')
+const extendVbs = require('@vbsnext/vbs-class-extends')
 let source = fs.readFileSync(file).toString();
 extendVbs(source).then((resolved)=>{
     console.log(`Writing resolved file to: ${outFile}`)

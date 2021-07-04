@@ -4,8 +4,8 @@ Option Explicit
 
 Dim debug: debug = (WScript.Arguments.Named("debug") = "true")
 if (debug) Then WScript.Echo "Debug is enabled"
-Dim VBSPM_TEST_INDEX: VBSPM_TEST_INDEX = 1
-Dim vbspmDir: vbspmDir=Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,"\"))
+Dim VBSNEXT_TEST_INDEX: VBSNEXT_TEST_INDEX = 1
+Dim vbsnextDir: vbsnextDir=Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,"\"))
 Dim baseDir
 With CreateObject("WScript.Shell")
     baseDir=.CurrentDirectory
@@ -607,11 +607,11 @@ Public Function log(msg)
 cFS.WriteFile "build.log", msg, false
 End Function
 
-log "VBSPM Directory: " & vbspmDir	
+log "VBSNext Directory: " & vbsnextDir	
 
 Class ClassA
     public default sub CallMe
-        WScript.Echo "I'm in ClassA"
+        WScript.Echo "Class-extending resolved successfully."
     End Sub
 End Class
 
@@ -642,18 +642,3 @@ End Sub
 Public Sub Import(file)
 
 End Sub
-
-
-'================= File: C:\Users\nanda\git\xps.local.npm\vbspm\bin\test-cls.vbs =================
-Class BUILDTEST
-    Public default Property Get Status
-            Status = "Successfully.."
-    End Property
-End Class
-
-
-'================= File: C:\Users\nanda\git\xps.local.npm\vbspm\bin\test.vbs =================
-Dim test
-Include "bin\test-cls.vbs"
-set test = new BUILDTEST
-Wscript.Echo "Build completed " & test & "."

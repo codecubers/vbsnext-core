@@ -1,6 +1,7 @@
+'TODO: Bug to be fixed; extends in string literals causing stirng to break
 Class ClassA
     public default sub CallMe
-        WScript.Echo "I'm in ClassA"
+        WScript.Echo "Class-extending resolved successfully."
     End Sub
 End Class
 

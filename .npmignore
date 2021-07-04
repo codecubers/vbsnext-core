@@ -1,9 +1,13 @@
 node_modules
 .npmrc
 *.pfx
-bin
 build
 lib
 test
 build.log
-class-resolver.js
+bin\local-class-resolver.js
+bin\builder.wsf
+bin\runner.wsf
+bin\wsfParser.js
+builder.cmd
+test.cmd

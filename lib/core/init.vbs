@@ -2,8 +2,8 @@ Option Explicit
 
 Dim debug: debug = (WScript.Arguments.Named("debug") = "true")
 if (debug) Then WScript.Echo "Debug is enabled"
-Dim VBSPM_TEST_INDEX: VBSPM_TEST_INDEX = 1
-Dim vbspmDir: vbspmDir=Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,"\"))
+Dim VBSNEXT_TEST_INDEX: VBSNEXT_TEST_INDEX = 1
+Dim vbsnextDir: vbsnextDir=Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,"\"))
 Dim baseDir
 With CreateObject("WScript.Shell")
     baseDir=.CurrentDirectory

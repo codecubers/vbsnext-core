@@ -1,4 +1,4 @@
 Dim test
-Include "bin\test-cls.vbs"
+Include "test\test-cls.vbs"
 set test = new BUILDTEST
 Wscript.Echo "Build completed " & test & "."

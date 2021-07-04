@@ -16,7 +16,7 @@ End Sub
 
 ' Just before start writing Include/Import file contents to the builder,
 ' Write the vbspm.vbs file contents
-BundleScript vbspmDir & "\vbspm-build.vbs", true
+BundleScript vbsnextDir & "\vbsnext-build.vbs", true
 
 '===========================
 On Error Resume Next
