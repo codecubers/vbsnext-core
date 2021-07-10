@@ -1,12 +1,19 @@
 const fs = require('fs');
+const path = require('path');
 const extendVbs = require('@vbsnext/vbs-class-extends')
-let source = fs.readFileSync('bin\\vbsnext-unresolved.vbs').toString();
+
+let fRunnerUnresolved = path.join("bin", "vbsnext-unresolved.vbs");
+let fRunnerResolved = path.join("bin", "vbsnext.vbs");
+let fBuilderUnresolved = path.join("bin", "vbsnext-build-unresolved.vbs");
+let fBUilderResolved = path.join("bin", "vbsnext-build.vbs");
+
+let source = fs.readFileSync(fRunnerUnresolved).toString();
 extendVbs(source).then((resolved)=>{
-    fs.writeFileSync('bin\\vbsnext.vbs', resolved);
-    source = fs.readFileSync('bin\\vbsnext-build-unresolved.vbs').toString();
-    fs.unlinkSync('bin\\vbsnext-unresolved.vbs')
+    fs.writeFileSync(fRunnerResolved, resolved);
+    source = fs.readFileSync(fBuilderUnresolved).toString();
+    fs.unlinkSync(fRunnerUnresolved)
     extendVbs(source).then((resolved)=>{
-        fs.writeFileSync('bin\\vbsnext-build.vbs', resolved);
-        fs.unlinkSync('bin\\vbsnext-build-unresolved.vbs')
+        fs.writeFileSync(fBUilderResolved, resolved);
+        fs.unlinkSync(fBuilderUnresolved)
     })
 })
