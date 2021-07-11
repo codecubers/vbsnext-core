@@ -19,9 +19,9 @@ End Sub
 BundleScript vbsnextDir & "\vbsnext-build.vbs", true
 
 '===========================
-On Error Resume Next
+' On Error Resume Next
 Include file
-On Error Goto 0
+' On Error Goto 0
 '===========================
 
 ' Wscript.Echo arrUtil.toString(IncludedScripts)

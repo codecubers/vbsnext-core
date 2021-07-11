@@ -584,7 +584,19 @@ Public Function Include(file)
     Dim content: content = cFS.ReadFile(path)
     if content <> "" Then
 
-      ExecuteGlobal content
+      dim lines
+      lines = split(join(split(content, ":"), vbCrLf), vbCrLf)
+      Dim includeS
+      for i = 0 to ubound(lines)
+        WScript.Echo "Searching in line:" & lines(i)
+        if InStr(lines(i), "Include(") > 0 Or InStr(lines(i), "Include """) > 0 Or InStr(lines(i), "Import(") > 0 or InStr(lines(i), "Import """) > 0 Then
+          includeS = includeS & lines(i) & vbCrLf
+        end if
+      next
+      WScript.Echo "Lines to execute:" & includeS
+      if includeS <> "" Then
+          ExecuteGlobal includeS
+      End If
     Else
       log "File content is empty. Not loaded."
     End If
@@ -639,9 +651,7 @@ End Sub
 
 BundleScript vbsnextDir & "\vbsnext-build.vbs", true
 
-On Error Resume Next
 Include file
-On Error Goto 0
 
 Dim i, core
 for i = UBound(IncludedScripts) to 0 step -1
