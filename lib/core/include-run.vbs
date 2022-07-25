@@ -30,7 +30,7 @@ Public Function Include(file)
       'content = "iThread = Thread(iThread)" & VBCRLF & content
       'EchoX "Content: %x", content
       dim lines
-      lines = split(join(split(content, ":"), vbCrLf), vbCrLf)
+      lines = split(content, vbCrLf)
       Dim includeS
       for i = 0 to ubound(lines)
         WScript.Echo "Searching in line:" & lines(i)

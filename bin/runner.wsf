@@ -8,6 +8,7 @@
         <script language="VBScript"><![CDATA[
                 
                 Redim IncludedScripts(-1)
+                Redim ImportedScripts(-1)
                 Dim buildDir
                 Dim createBundle: createBundle = false
                 Dim buildBundleFile: buildBundleFile = ""

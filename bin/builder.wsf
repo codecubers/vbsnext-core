@@ -5,6 +5,9 @@
         </runtime>
 
         <script language="VBScript" src="lib/core/init.vbs" />
+        <script language="VBScript"><![CDATA[
+                Redim ImportedScripts(-1)
+        ]]></script>
         <script language="VBScript" src="lib/core/Console/Console.vbs" />
         <script language="VBScript" src="lib/core/init-functions.vbs" />
         <script language="VBScript" src="lib/core/Collection/Collection.vbs" />

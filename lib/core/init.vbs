@@ -8,6 +8,13 @@ Dim baseDir
 With CreateObject("WScript.Shell")
     baseDir=.CurrentDirectory
 End With
+
+Dim SCRIPT_PATH
+Dim CURRENT_DIRECTOR
+'Easy to remember global variables
+SCRIPT_PATH = vbsnextDir
+CURRENT_DIRECTOR = baseDir
+
 ' Judging by the declaration and description of the startsWith Java function, 
 ' the "most straight forward way" to implement it in VBA would either be with Left:
 ' Author: Blackhawk

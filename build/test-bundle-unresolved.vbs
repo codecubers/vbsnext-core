@@ -11,12 +11,6 @@ With CreateObject("WScript.Shell")
     baseDir=.CurrentDirectory
 End With
 
-Dim SCRIPT_PATH
-Dim CURRENT_DIRECTOR
-
-SCRIPT_PATH = vbsnextDir
-CURRENT_DIRECTOR = baseDir
-
 Public Function startsWith(str, prefix)
     startsWith = Left(str, Len(prefix)) = prefix
 End Function
@@ -54,9 +48,7 @@ Public Function argsDict()
         End If
     Next
     set argsDict = dict
-End Function
-
-Redim ImportedScripts(-1)	
+End Function	
 
 Class Console
 
@@ -303,7 +295,7 @@ End Class
 
 	Public Function contains(arr, s) 
 		If Not isArray(arr) Then
-			contains = "Supplied parameter is not an array."
+			toString = "Supplied parameter is not an array."
 			Exit Function
 		End If
 
@@ -349,41 +341,37 @@ Class PathUtil
 	End Sub
 
 	Public Property Get ScriptPath
-	    ScriptPath = m_script
+	ScriptPath = m_script
 	End Property
 
 	Public Property Get BasePath
-	    BasePath = m_base
+	BasePath = m_base
 	End Property
 
 	Public Property Let BasePath(path)
-        Do While endsWith(path, "\")
-            path = Left(Path, Len(path)-1)
-        Loop
-        m_base = Resolve(path)
-        EchoDX "New Base Path: %x", m_base
+	Do While endsWith(path, "\")
+		path = Left(Path, Len(path)-1)
+	Loop
+	m_base = Resolve(path)
+	EchoDX "New Base Path: %x", m_base
 	End Property
 
 	Public Property Get TempBasePath
-	    TempBasePath = m_temp(UBound(m_temp))
+	TempBasePath = m_temp(UBound(m_temp))
 	End Property
 
 	Public Property Let TempBasePath(path)
-        Do While endsWith(path, "\")
-            path = Left(Path, Len(path)-1)
-        Loop
-        If arrUtil.contains(m_temp, path) Then
-            EchoDX "Temp Path %x already exists; skipped", path
-        Else
-            ReDim Preserve m_temp(Ubound(m_temp)+1)
-            m_temp(Ubound(m_temp)) = Resolve(path)
-            EchoDX "New Temp Base Path: %x", m_temp(Ubound(m_temp))
-        End If
+	Do While endsWith(path, "\")
+		path = Left(Path, Len(path)-1)
+	Loop
+	If arrUtil.contains(m_temp, path) Then
+		EchoDX "Temp Path %x already exists; skipped", path
+	Else
+		ReDim Preserve m_temp(Ubound(m_temp)+1)
+		m_temp(Ubound(m_temp)) = Resolve(path)
+		EchoDX "New Temp Base Path: %x", m_temp(Ubound(m_temp))
+	End If
 	End Property
-
-    Public Sub AddBasepath(path)
-        TempBasePath = path
-    End Sub
 
 	Function Resolve(path)
 		Dim pathBase, lPath, final
@@ -606,12 +594,6 @@ Class FSO
 		On Error GoTo 0
 	End Sub
 
-	Public Sub MoveFile(src, dest)
-		On Error Resume Next
-		objFSO.MoveFile src, dest
-		On Error GoTo 0
-	End Sub
-
 End Class
 
 
@@ -660,63 +642,3 @@ End Sub
 Public Sub Import(file)
 
 End Sub
-
-Dim sThreadBase: sThreadBase = baseDir
-Public Function Import(file)
-  EchoD "Importing... (" + file + ")"
-  if cFS.GetFileExtn(file) = "" Then
-    log "File extension missing. Skipping"
-
-  end if
-  Dim path
-
-  putil.TempBasePath = sThreadBase
-  path = putil.Resolve(file)
-  EchoD "Resolved to: " & path
-
-  sThreadBase = cFS.GetFileDir(path)
-  EchoD "Current base path is: " & sThreadBase
-
-  If arrUtil.contains(ImportedScripts, Lcase(path)) Then
-    log "Skipping as already imported!!"
-  Else
-    Redim Preserve ImportedScripts(UBound(ImportedScripts)+1)
-    ImportedScripts(UBound(ImportedScripts)) = Lcase(path)
-    Dim content: content = cFS.ReadFile(path)
-    if content <> "" Then
-
-      dim lines
-      Dim sThisLine
-      Dim i
-
-      lines = split(content, vbCrLf)
-      Dim includeS
-      for i = 0 to ubound(lines)
-        sThisLine = Trim(lines(i))
-        if Left(Lcase(sThisLine), 8) = "'import(" Then
-          sThisLine = right(sThisLine, len(sThisLine)-1)
-          EchoD "--------------> Found:" & sThisLine
-          includeS = includeS & sThisLine & vbCrLf
-        end if
-      next
-
-      if includeS <> "" Then
-          EchoD "Scanning:" & vbcrlf & includeS
-          ExecuteGlobal includeS
-      End If
-    Else
-      log "File content is empty. Not loaded."
-    End If
-  End If
-End Function
-
-Function ResolveImports(entryPoint)
-    pUtil.AddBasepath "src\modules"
-    pUtil.AddBasepath "src\classes"
-    pUtil.AddBasepath "src\processors"
-
-    Redim ImportedScripts(-1)
-    Import(entryPoint)
-    Wscript.Echo arrUtil.toString(ImportedScripts)
-    ResolveImports = ImportedScripts
-End Function

@@ -1,11 +1,11 @@
 Class ArrayUtil
-	
+
 	Public Function toString(arr)
 		If Not isArray(arr) Then
 			toString = "Supplied parameter is not an array."
 			Exit Function
 		End If
-		
+
 		Dim s, i
 		s = "Array{" & UBound(arr) & "} [" & vbCrLf
 		For i = 0  To UBound(arr)
@@ -15,15 +15,15 @@ Class ArrayUtil
 		Next
 		s = s & "]"
 		toString = s
-		
+
 	End Function
-	
+
 	Public Function contains(arr, s) 
 		If Not isArray(arr) Then
-			toString = "Supplied parameter is not an array."
+			contains = "Supplied parameter is not an array."
 			Exit Function
 		End If
-		
+
 		Dim i, bFlag
 		bFlag = False
 		For i = 0  To UBound(arr)

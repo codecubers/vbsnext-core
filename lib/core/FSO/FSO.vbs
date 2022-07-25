@@ -134,5 +134,11 @@ Class FSO
 		objFSO.DeleteFile(file)
 		On Error GoTo 0
 	End Sub
+
+	Public Sub MoveFile(src, dest)
+		On Error Resume Next
+		objFSO.MoveFile src, dest
+		On Error GoTo 0
+	End Sub
 	
 End Class

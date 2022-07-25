@@ -1,0 +1,1 @@
+call cscript //nologo %dp0%\..\@vbsnext\vbsnext-core\bin\vbanext.vbs %*
