@@ -605,12 +605,12 @@ Public Function Include(file)
       lines = split(content, vbCrLf)
       Dim includeS
       for i = 0 to ubound(lines)
-        'WScript.Echo "Searching in line:" & lines(i)
+
         if InStr(lines(i), "Include(") > 0 Or InStr(lines(i), "Include """) > 0 Or InStr(lines(i), "Import(") > 0 or InStr(lines(i), "Import """) > 0 Then
           includeS = includeS & lines(i) & vbCrLf
         end if
       next
-      'WScript.Echo "Lines to execute:" & includeS
+
       if includeS <> "" Then
           ExecuteGlobal includeS
       End If
