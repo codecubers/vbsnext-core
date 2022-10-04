@@ -41,5 +41,5 @@ script = script + "</job>"
 script = script + "</package>"
 
 CreateFolder ".\build"
-WriteLog ".\build\index.wsf", script, true
+WriteWScript.Echo ".\build\index.wsf", script, true
 WScript.Echo "Package " + o("name") + " built successfully."

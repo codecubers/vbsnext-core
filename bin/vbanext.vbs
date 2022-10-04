@@ -279,7 +279,7 @@ Public Function log(msg)
     Wscript.Echo msg
 End Function
 
-'log "================================= Call ================================="
+
 Dim baseDir
 With CreateObject("WScript.Shell")
     baseDir=.CurrentDirectory
@@ -445,7 +445,7 @@ set putil = new PathUtil
 Public Function Import(file)
   EchoD "Importing... (" + file + ")"
   if cFS.GetFileExtn(file) = "" Then
-    log "File extension missing. Skipping"
+    WScript.Echo "File extension missing. Skipping"
     'file = file + ".vbs"
   end if
   Dim path
@@ -458,7 +458,7 @@ Public Function Import(file)
   EchoD "Current base path is: " & sThreadBase
 
   If arrUtil.contains(IncludedScripts, Lcase(path)) Then
-    log "Skipping as already imported!!"
+    WScript.Echo "Skipping as already imported!!"
   Else
     Redim Preserve IncludedScripts(UBound(IncludedScripts)+1)
     IncludedScripts(UBound(IncludedScripts)) = Lcase(path)
@@ -484,7 +484,7 @@ Public Function Import(file)
           ExecuteGlobal includeS
       End If
     Else
-      log "File content is empty. Not loaded."
+      WScript.Echo "File content is empty. Not loaded."
     End If
   End If
 End Function

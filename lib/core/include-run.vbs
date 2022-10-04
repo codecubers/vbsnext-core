@@ -6,16 +6,16 @@
 ' End Function
 Dim sThreadBase: sThreadBase = baseDir
 Public Function Include(file)
-  log "Include(" + file + ")"
+  WScript.Echo "Include(" + file + ")"
   if cFS.GetFileExtn(file) = "" Then
-    log "File extension missing. Adding .vbs"
+    WScript.Echo "File extension missing. Adding .vbs"
     file = file + ".vbs"
   end if
   Dim path
   'path = cFS.GetFilePath(file)
   putil.TempBasePath = sThreadBase
   path = putil.Resolve(file)
-  log "File full path: " & path
+  WScript.Echo "File full path: " & path
   'cFS.setDir(cFS.GetFileDir(path))
   sThreadBase = cFS.GetFileDir(path)
   
@@ -43,10 +43,10 @@ Public Function Include(file)
           ExecuteGlobal includeS
       End If
     Else
-      log "File content is empty. Not loaded."
+      WScript.Echo "File content is empty. Not loaded."
     End If
   Else
-    log "File: " & path & " already loaded."
+    WScript.Echo "File: " & path & " already loaded."
   End If
   Include = Include
 End Function

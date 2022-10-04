@@ -542,7 +542,7 @@ Public Function log(msg)
 cFS.WriteFile "build.log", msg, false
 End Function
 
-log "VBSNext Directory: " & vbsnextDir	
+WScript.Echo "VBSNext Directory: " & vbsnextDir	
 
 Class ClassA
     public default sub CallMe
@@ -571,27 +571,27 @@ Dim ccb
 set ccb = new ClassB
 ccb.CallMe
 
-log "================================= Call ================================="
+WScript.Echo "================================= Call ================================="
 
-log "Base path: " & baseDir
+WScript.Echo "Base path: " & baseDir
 
 Public Sub Import(pkg)
-  log "Import(" + Pkg + ")"
+  WScript.Echo "Import(" + Pkg + ")"
   Include baseDir & "\node_modules\" + pkg + "\index.vbs"
 End Sub
 
 Dim sThreadBase: sThreadBase = baseDir
 Public Function Include(file)
-  log "Include(" + file + ")"
+  WScript.Echo "Include(" + file + ")"
   if cFS.GetFileExtn(file) = "" Then
-    log "File extension missing. Adding .vbs"
+    WScript.Echo "File extension missing. Adding .vbs"
     file = file + ".vbs"
   end if
   Dim path
 
   putil.TempBasePath = sThreadBase
   path = putil.Resolve(file)
-  log "File full path: " & path
+  WScript.Echo "File full path: " & path
 
   sThreadBase = cFS.GetFileDir(path)
 
@@ -605,34 +605,34 @@ Public Function Include(file)
       lines = split(content, vbCrLf)
       Dim includeS
       for i = 0 to ubound(lines)
-        WScript.Echo "Searching in line:" & lines(i)
+        'WScript.Echo "Searching in line:" & lines(i)
         if InStr(lines(i), "Include(") > 0 Or InStr(lines(i), "Include """) > 0 Or InStr(lines(i), "Import(") > 0 or InStr(lines(i), "Import """) > 0 Then
           includeS = includeS & lines(i) & vbCrLf
         end if
       next
-      WScript.Echo "Lines to execute:" & includeS
+      'WScript.Echo "Lines to execute:" & includeS
       if includeS <> "" Then
           ExecuteGlobal includeS
       End If
     Else
-      log "File content is empty. Not loaded."
+      WScript.Echo "File content is empty. Not loaded."
     End If
   Else
-    log "File: " & path & " already loaded."
+    WScript.Echo "File: " & path & " already loaded."
   End If
   Include = Include
 End Function
 
-log "Execution Started for file"
+WScript.Echo "Execution Started for file"
 
 Dim file
 file = WScript.Arguments.Named("file")
 If file = "" Then
-    log "Script file not provided as a named argument [/file:]"
+    WScript.Echo "Script file not provided as a named argument [/file:]"
     if Wscript.Arguments.count > 0 then
       file = Wscript.Arguments(0) 
       if file = "" Then
-        log "No file argument provided."
+        WScript.Echo "No file argument provided."
         Wscript.Quit
       End If
     else 
@@ -643,13 +643,13 @@ End If
 file = baseDir & "\" & file
 
 if cFS.GetFileExtn(file) = "" Then
-  log "File extension missing. Adding .vbs"
+  WScript.Echo "File extension missing. Adding .vbs"
   file = file + ".vbs"
 end if
 
-log "Main Script: " & file
+WScript.Echo "Main Script: " & file
 buildBundleFile = buildDir & "\" & cFS.GetBaseName(file) &  "-bundle-unresolved.vbs"
-log "buildBundleFile: " & buildBundleFile
+WScript.Echo "buildBundleFile: " & buildBundleFile
 
 Sub BundleScript(file, overwrite)
     Dim isOverwrite: isOverwrite = (overwrite = true)

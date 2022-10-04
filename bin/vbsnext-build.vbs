@@ -625,7 +625,7 @@ Public Function log(msg)
 cFS.WriteFile "build.log", msg, false
 End Function
 
-log "VBSNext Directory: " & vbsnextDir	
+WScript.Echo "VBSNext Directory: " & vbsnextDir	
 
 Class ClassA
     public default sub CallMe
@@ -665,7 +665,7 @@ Dim sThreadBase: sThreadBase = baseDir
 Public Function Import(file)
   EchoD "Importing... (" + file + ")"
   if cFS.GetFileExtn(file) = "" Then
-    log "File extension missing. Skipping"
+    WScript.Echo "File extension missing. Skipping"
 
   end if
   Dim path
@@ -678,7 +678,7 @@ Public Function Import(file)
   EchoD "Current base path is: " & sThreadBase
 
   If arrUtil.contains(ImportedScripts, Lcase(path)) Then
-    log "Skipping as already imported!!"
+    WScript.Echo "Skipping as already imported!!"
   Else
     Redim Preserve ImportedScripts(UBound(ImportedScripts)+1)
     ImportedScripts(UBound(ImportedScripts)) = Lcase(path)
@@ -705,7 +705,7 @@ Public Function Import(file)
           ExecuteGlobal includeS
       End If
     Else
-      log "File content is empty. Not loaded."
+      WScript.Echo "File content is empty. Not loaded."
     End If
   End If
 End Function

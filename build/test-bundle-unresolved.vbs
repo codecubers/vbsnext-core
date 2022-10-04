@@ -607,7 +607,7 @@ Public Function log(msg)
 cFS.WriteFile "build.log", msg, false
 End Function
 
-log "VBSNext Directory: " & vbsnextDir	
+WScript.Echo "VBSNext Directory: " & vbsnextDir	
 
 Class ClassA
     public default sub CallMe

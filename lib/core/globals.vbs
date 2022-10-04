@@ -1,8 +1,8 @@
-log "================================= Call ================================="
+WScript.Echo "================================= Call ================================="
 
-log "Base path: " & baseDir
+WScript.Echo "Base path: " & baseDir
 
 Public Sub Import(pkg)
-  log "Import(" + Pkg + ")"
+  WScript.Echo "Import(" + Pkg + ")"
   Include baseDir & "\node_modules\" + pkg + "\index.vbs"
 End Sub

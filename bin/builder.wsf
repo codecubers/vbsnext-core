@@ -36,7 +36,7 @@
                 End Function
 
                 'vbsnextDir = cFS.GetFileDir(WScript.ScriptFullName)
-                log "VBSNext Directory: " & vbsnextDir
+                WScript.Echo "VBSNext Directory: " & vbsnextDir
 
         ]]></script>
         <script language="VBScript" src="lib/core/extends.vbs" />

@@ -1,13 +1,13 @@
-log "Execution Started for file"
+WScript.Echo "Execution Started for file"
 
 Dim file
 file = WScript.Arguments.Named("file")
 If file = "" Then
-    log "Script file not provided as a named argument [/file:]"
+    WScript.Echo "Script file not provided as a named argument [/file:]"
     if Wscript.Arguments.count > 0 then
       file = Wscript.Arguments(0) 
       if file = "" Then
-        log "No file argument provided."
+        WScript.Echo "No file argument provided."
         Wscript.Quit
       End If
     else 
@@ -18,11 +18,11 @@ End If
 file = baseDir & "\" & file
 
 if cFS.GetFileExtn(file) = "" Then
-  log "File extension missing. Adding .vbs"
+  WScript.Echo "File extension missing. Adding .vbs"
   file = file + ".vbs"
 end if
 
-log "Main Script: " & file
+WScript.Echo "Main Script: " & file
 buildBundleFile = buildDir & "\" & cFS.GetBaseName(file) &  "-bundle-unresolved.vbs"
-log "buildBundleFile: " & buildBundleFile
+WScript.Echo "buildBundleFile: " & buildBundleFile
 
