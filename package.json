@@ -1,6 +1,6 @@
 {
   "name": "@vbsnext/vbsnext-core",
-  "version": "1.3.7",
+  "version": "1.3.8",
   "description": "VbsNext project core scripts",
   "main": "vbanext.cmd",
   "bin": {
